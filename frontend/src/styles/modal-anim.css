@@ -1,0 +1,28 @@
+@media (prefers-reduced-motion: no-preference) {
+  .modal-card {
+    transform-origin: bottom left;
+    animation: modal-grow 0.35s ease forwards;
+  }
+  .modal-body {
+    opacity: 0;
+    animation: fade-in 0.25s ease forwards;
+    animation-delay: 0.25s;
+  }
+}
+
+@keyframes modal-grow {
+  from {
+    transform: scale(0.15);
+    border-radius: 30px;
+  }
+  to {
+    transform: scale(1);
+    border-radius: 20px;
+  }
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
