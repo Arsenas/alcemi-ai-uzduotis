@@ -1,6 +1,7 @@
 .ai-fab {
   position: fixed;
-  left: 80px;
+  left: 50%;
+  transform: translateX(-50%);
   top: 728px;
   height: 48px;
   padding: 10px 16px;
@@ -16,9 +17,11 @@
   box-shadow: 0 0 30px 1px var(--elev-50);
   cursor: pointer;
 }
+
 .ai-fab__label {
   line-height: 1;
 }
+
 .ai-fab__icon {
   display: inline-block;
   transform: translateY(1px);

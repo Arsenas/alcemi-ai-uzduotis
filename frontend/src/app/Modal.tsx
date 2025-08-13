@@ -1,4 +1,5 @@
 import { ReactNode, useEffect } from "react";
+import "./styles/gradients.css";
 
 type Props = {
   open: boolean;
@@ -27,6 +28,13 @@ export default function Modal({ open, onClose, title, children }: Props) {
     <div className="modal-root" role="dialog" aria-modal="true" aria-labelledby="modal-title" id="ai-modal">
       <div className="backdrop" onClick={onClose} />
       <div className="modal-card">
+        {/* Gradientiniai sluoksniai */}
+        <div className="modal-gradients">
+          <div className="gradient-layer gradient-rect" />
+          <div className="gradient-layer gradient-v62" />
+          <div className="gradient-layer gradient-v62-big" />
+        </div>
+
         <div className="modal-head">
           <button className="ghost" aria-label="Back">
             ←
