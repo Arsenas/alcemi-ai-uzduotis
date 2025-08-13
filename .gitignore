@@ -1,0 +1,4 @@
+﻿node_modules/
+# Vite build
+frontend/dist/
+
