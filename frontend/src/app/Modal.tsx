@@ -1,5 +1,5 @@
-import { ReactNode, useEffect } from "react";
-import "./styles/gradients.css";
+import { ReactNode, useEffect, useState } from "react";
+import "../styles/gradients.css";
 
 type Props = {
   open: boolean;
@@ -9,23 +9,40 @@ type Props = {
 };
 
 export default function Modal({ open, onClose, title, children }: Props) {
+  const [show, setShow] = useState(open);
+
+  // Mount/unmount su vėlavimu, kad matytųsi uždarymo animacija
+  useEffect(() => {
+    if (open) {
+      setShow(true);
+      document.body.style.overflow = "hidden";
+    } else {
+      const t = setTimeout(() => setShow(false), 260); // šiek tiek daugiau nei CSS transition
+      document.body.style.overflow = "";
+      return () => clearTimeout(t);
+    }
+  }, [open]);
+
+  // ESC
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!show) return null;
 
   return (
-    <div className="modal-root" role="dialog" aria-modal="true" aria-labelledby="modal-title" id="ai-modal">
+    <div
+      className={`modal-root ${open ? "open" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      id="ai-modal"
+    >
       <div className="backdrop" onClick={onClose} />
       <div className="modal-card">
         {/* Gradientiniai sluoksniai */}
@@ -44,6 +61,7 @@ export default function Modal({ open, onClose, title, children }: Props) {
             ×
           </button>
         </div>
+
         <div className="modal-body">{children}</div>
       </div>
     </div>

@@ -1,11 +1,9 @@
-/* src/styles/gradients.css */
-
+/*
 .modal-gradients {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  pointer-events: none; /* Kad gradientai netrukdytų klikams */
-}
+  pointer-events: none; 
 
 .gradient-layer {
   position: absolute;
@@ -13,7 +11,7 @@
   mix-blend-mode: plus-lighter;
 }
 
-/* Mobile: rectangle baltas */
+
 .gradient-rect {
   width: 701.2px;
   height: 425.23px;
@@ -25,7 +23,7 @@
   transform: rotate(25.87deg);
 }
 
-/* Mobile: vector 62 */
+
 .gradient-v62 {
   width: 767px;
   height: 322px;
@@ -36,7 +34,7 @@
   filter: blur(300px);
 }
 
-/* Mobile: vector 62 (didesnis) */
+
 .gradient-v62-big {
   width: 1181px;
   height: 496px;
@@ -46,7 +44,7 @@
   filter: blur(400px);
 }
 
-/* Desktop overrides */
+
 @media (min-width: 1024px) {
   .gradient-rect {
     width: 2224.47px;
@@ -70,4 +68,5 @@
     left: -238px;
     filter: blur(404.95px);
   }
-}
+} 
+*/
