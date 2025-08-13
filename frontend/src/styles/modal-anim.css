@@ -1,6 +1,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .modal-card {
-    transform-origin: bottom left;
+    /* paliekam tą patį origin kaip mobile */
+    transform-origin: 50% 85%;
     animation: modal-grow 0.35s ease forwards;
   }
   .modal-body {
@@ -12,12 +13,15 @@
 
 @keyframes modal-grow {
   from {
-    transform: scale(0.15);
+    /* SVARBIAUSIA: palikti ir translate, ir scale */
+    transform: translate(-50%, -50%) scale(0.86);
     border-radius: 30px;
+    opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
     border-radius: 20px;
+    opacity: 1;
   }
 }
 

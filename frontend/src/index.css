@@ -1,6 +1,7 @@
 @import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap");
 
 :root {
+  font-family: "Satoshi", "Inter", sans-serif;
   --brand-blue: #1632cd;
   --modal-bg: #02092e;
   --text-on-dark: #fcfcfc;

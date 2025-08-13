@@ -65,6 +65,13 @@ export default function Modal({ open, onClose, title, children }: Props) {
         </div>
 
         <div className="modal-body">{children}</div>
+        <div className="modal-footer">
+          <img
+            src={window.innerWidth >= 1024 ? "/img/alcemi-desktop.svg" : "/img/alcemi-mobile.svg"}
+            alt="Powered by Alcemi"
+            className="alcemi-logo"
+          />
+        </div>
       </div>
     </div>
   );
