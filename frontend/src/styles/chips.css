@@ -1,0 +1,32 @@
+.chips-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 8px 4px;
+}
+.chip {
+  height: 47px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--chip-border);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fcfcfc;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chip:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 6px #3654ff, 0 0 0 8px #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: transparent;
+}
+.chip[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: transparent;
+}
