@@ -50,20 +50,26 @@ export default function Modal({ open, onClose, title, children }: Props) {
       <div className="backdrop" onClick={onClose} />
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-ctr">
+          {/* NAV BAR */}
           <div className="modal-head">
             <button className="ghost" aria-label="Back">
               ←
             </button>
-            <h1 id="modal-title">{withBreakAfterLooking(title)}</h1>
             <button className="ghost" aria-label="Close" onClick={onClose}>
               ×
             </button>
           </div>
 
+          {/* H1 */}
+          <h1 id="modal-title" className="modal-title">
+            {withBreakAfterLooking(title)}
+          </h1>
+
+          {/* TURINIO BLOKAS */}
           <div className="modal-body">{children}</div>
 
+          {/* FOOTER LOGO */}
           <div className="modal-footer">
-            {/* public/img/logo-desktop.svg */}
             <img className="powered-by" src="/img/logo-desktop.svg" alt="Powered by Alcemi" />
           </div>
         </div>
