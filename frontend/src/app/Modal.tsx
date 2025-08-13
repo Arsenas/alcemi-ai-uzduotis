@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import "../styles/gradients.css";
 import "../styles/modal-anim.css";
+import "../styles/modal.css";
 
 type Props = {
   open: boolean;
@@ -10,27 +10,35 @@ type Props = {
   children: ReactNode;
 };
 
+function withBreakAfterLooking(text: string) {
+  const m = text.match(/^(.*\blooking)\b(.*)$/i);
+  if (!m) return text;
+  return (
+    <>
+      {m[1]}
+      <br />
+      {m[2].trimStart()}
+    </>
+  );
+}
+
 export default function Modal({ open, onClose, title, children }: Props) {
   const [show, setShow] = useState(open);
 
-  // Mount/unmount su vėlavimu, kad matytųsi uždarymo animacija
   useEffect(() => {
     if (open) {
       setShow(true);
       document.body.style.overflow = "hidden";
     } else {
-      const t = setTimeout(() => setShow(false), 260); // šiek tiek daugiau nei CSS transition
+      const t = setTimeout(() => setShow(false), 260);
       document.body.style.overflow = "";
       return () => clearTimeout(t);
     }
   }, [open]);
 
-  // ESC
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
@@ -38,39 +46,26 @@ export default function Modal({ open, onClose, title, children }: Props) {
   if (!show) return null;
 
   return (
-    <div
-      className={`modal-root ${open ? "open" : ""}`}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-      id="ai-modal"
-    >
+    <div className={`modal-root ${open ? "open" : ""}`} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="backdrop" onClick={onClose} />
-      <div className="modal-card">
-        {/* Gradientiniai sluoksniai */}
-        <div className="modal-gradients">
-          <div className="gradient-layer gradient-rect" />
-          <div className="gradient-layer gradient-v62" />
-          <div className="gradient-layer gradient-v62-big" />
-        </div>
+      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-ctr">
+          <div className="modal-head">
+            <button className="ghost" aria-label="Back">
+              ←
+            </button>
+            <h1 id="modal-title">{withBreakAfterLooking(title)}</h1>
+            <button className="ghost" aria-label="Close" onClick={onClose}>
+              ×
+            </button>
+          </div>
 
-        <div className="modal-head">
-          <button className="ghost" aria-label="Back">
-            ←
-          </button>
-          <h1 id="modal-title">{title}</h1>
-          <button className="ghost" aria-label="Close" onClick={onClose}>
-            ×
-          </button>
-        </div>
+          <div className="modal-body">{children}</div>
 
-        <div className="modal-body">{children}</div>
-        <div className="modal-footer">
-          <img
-            src={window.innerWidth >= 1024 ? "/img/alcemi-desktop.svg" : "/img/alcemi-mobile.svg"}
-            alt="Powered by Alcemi"
-            className="alcemi-logo"
-          />
+          <div className="modal-footer">
+            {/* public/img/logo-desktop.svg */}
+            <img className="powered-by" src="/img/logo-desktop.svg" alt="Powered by Alcemi" />
+          </div>
         </div>
       </div>
     </div>

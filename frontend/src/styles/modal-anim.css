@@ -1,8 +1,12 @@
 @media (prefers-reduced-motion: no-preference) {
   .modal-card {
-    /* paliekam tą patį origin kaip mobile */
     transform-origin: 50% 85%;
     animation: modal-grow 0.35s ease forwards;
+  }
+  @media (min-width: 1024px) {
+    .modal-card {
+      transform-origin: 50% 50%;
+    }
   }
   .modal-body {
     opacity: 0;
@@ -10,10 +14,8 @@
     animation-delay: 0.25s;
   }
 }
-
 @keyframes modal-grow {
   from {
-    /* SVARBIAUSIA: palikti ir translate, ir scale */
     transform: translate(-50%, -50%) scale(0.86);
     border-radius: 30px;
     opacity: 0;
@@ -24,7 +26,6 @@
     opacity: 1;
   }
 }
-
 @keyframes fade-in {
   to {
     opacity: 1;
