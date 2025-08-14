@@ -4,50 +4,81 @@ type Props = { items: string[]; onPick: (val: string) => void };
 
 export default function Chips({ items, onPick }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const drag = useRef(false);
-  const downX = useRef(0);
-  const scrollStart = useRef(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
-  // Click/tap OUTSIDE: grįžtam į default (no selected) ir nuimam fokusą nuo chip
+  // drag / scroll kontrolė
+  const dragging = useRef(false);
+  const startX = useRef(0);
+  const startScroll = useRef(0);
+
+  // Už ribų paspaudus – nuimam `selected` ir fokusą nuo chip
   useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      const w = wrapperRef.current;
+    const onDown = (e: PointerEvent) => {
+      const w = wrapRef.current;
       if (w && !w.contains(e.target as Node)) {
         setSelected(null);
         const ae = document.activeElement as HTMLElement | null;
-        if (ae && ae.classList.contains("chip")) ae.blur();
+        if (ae?.classList.contains("chip")) ae.blur();
       }
     };
-    document.addEventListener("pointerdown", onPointerDown, { passive: true });
-    return () => document.removeEventListener("pointerdown", onPointerDown);
+    document.addEventListener("pointerdown", onDown, { passive: true });
+    return () => document.removeEventListener("pointerdown", onDown);
   }, []);
 
   return (
     <div
-      ref={wrapperRef}
+      ref={wrapRef}
       className="suggestions"
       role="list"
-      onTouchStart={() => (drag.current = false)}
-      onTouchMove={() => (drag.current = true)}
-      onMouseDown={(e) => {
-        const el = wrapperRef.current;
+      tabIndex={0} // kad gautų fokusą ir veiktų rodyklės
+      onKeyDown={(e) => {
+        const el = wrapRef.current;
         if (!el) return;
-        drag.current = false;
-        downX.current = e.pageX;
-        scrollStart.current = el.scrollLeft;
+        if (e.key === "ArrowRight") {
+          el.scrollBy({ left: 96, behavior: "smooth" });
+          e.preventDefault();
+        } else if (e.key === "ArrowLeft") {
+          el.scrollBy({ left: -96, behavior: "smooth" });
+          e.preventDefault();
+        } else if (e.key === "Home") {
+          el.scrollTo({ left: 0, behavior: "smooth" });
+          e.preventDefault();
+        } else if (e.key === "End") {
+          el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+          e.preventDefault();
+        }
+      }}
+      onPointerDown={(e) => {
+        const el = wrapRef.current;
+        if (!el) return;
+        dragging.current = false;
+        startX.current = e.clientX;
+        startScroll.current = el.scrollLeft;
+        // laikom pointer capture, kad drag nenutrūktų palikus elementą
+        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
         el.classList.add("is-dragging");
       }}
-      onMouseMove={(e) => {
-        const el = wrapperRef.current;
+      onPointerMove={(e) => {
+        const el = wrapRef.current;
         if (!el || !el.classList.contains("is-dragging")) return;
-        const dx = e.pageX - downX.current;
-        if (Math.abs(dx) > 3) drag.current = true;
-        el.scrollLeft = scrollStart.current - dx;
-        e.preventDefault();
+        const dx = e.clientX - startX.current;
+        if (Math.abs(dx) > 3) dragging.current = true;
+        el.scrollLeft = startScroll.current - dx;
+        e.preventDefault(); // svarbu touch’uose
       }}
-      onMouseUp={() => wrapperRef.current?.classList.remove("is-dragging")}
-      onMouseLeave={() => wrapperRef.current?.classList.remove("is-dragging")}
+      onPointerUp={(e) => {
+        const el = wrapRef.current;
+        el?.classList.remove("is-dragging");
+        (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+        // mažas delay, kad click handleris matytų galutinę dragging būseną
+        requestAnimationFrame(() => (dragging.current = false));
+      }}
+      onPointerCancel={(e) => {
+        const el = wrapRef.current;
+        el?.classList.remove("is-dragging");
+        (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+        dragging.current = false;
+      }}
     >
       {items.map((label) => (
         <button
@@ -57,10 +88,10 @@ export default function Chips({ items, onPick }: Props) {
           type="button"
           aria-pressed={selected === label}
           onClick={(e) => {
-            if (drag.current) return; // buvo drag – neklikink
-            setSelected(label); // paliekam "selected"
+            if (dragging.current) return; // jei buvo drag, kliką ignoruojam
+            setSelected(label); // pažymim
             onPick(label);
-            (e.currentTarget as HTMLButtonElement).blur(); // nuimam focus, ring lieka per aria-pressed
+            (e.currentTarget as HTMLButtonElement).blur(); // focus nuimam, ring lieka per aria-pressed
           }}
         >
           {label}

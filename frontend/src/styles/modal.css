@@ -498,7 +498,7 @@
     align-items: stretch;
     flex: 1 1 auto;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     padding: 0;
   }
 
@@ -527,19 +527,12 @@
   .suggestions {
     width: 100%;
     max-width: none;
-    /* ištraukiam iki kortelės kraštų, bet paliekam vidinius latakus */
-    margin-left: calc(-1 * var(--gutter));
-    margin-right: calc(-1 * var(--gutter));
-    padding-left: var(--gutter);
-    padding-right: var(--gutter);
-    padding-top: 4px;
-    padding-bottom: 4px;
-
+    margin: 0;
+    padding: 4px 0;
     display: flex !important;
     flex-wrap: nowrap;
     align-items: center;
     gap: 16px;
-
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
@@ -550,9 +543,11 @@
   .suggestions::-webkit-scrollbar {
     display: none;
   }
+
   .suggestions .chip {
     flex: 0 0 auto;
     white-space: nowrap;
+    touch-action: pan-x;
   }
 
   /* drag metu indikatorius (neprivaloma, tik UX) */
