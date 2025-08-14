@@ -11,8 +11,13 @@ export default function Chips({ items, onPick }: Props) {
             className="chip"
             role="listitem"
             type="button"
-            onClick={() => onPick(label)}
-            onPointerDown={(e) => e.currentTarget.focus()} // <-- suteikia fokusą paspaudus
+            // neleisk fokuso ant paspaudimo pradžios
+            onMouseDown={(e) => e.preventDefault()}
+            // fokusą uždėk po atleidimo (click), tada kviesk onPick
+            onClick={(e) => {
+              e.currentTarget.focus();
+              onPick(label);
+            }}
           >
             {label}
           </button>

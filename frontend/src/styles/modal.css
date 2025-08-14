@@ -233,39 +233,58 @@
   transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease;
 }
 
-/* HOVER */
-.chip:hover {
-  background: rgba(255, 255, 255, 0.2); /* Figma hover 20% */
-  border-color: #d9d9d9; /* Figma border/secondary */
+/* DEFAULT */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 47px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease;
 }
 
-/* ON CLICK / SELECTED (paliekamas vizualas) */
+/* HOVER */
+.chip:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #d9d9d9;
+}
+
+/* ACTIVE / SELECTED – paspaudimo metu be žiedo */
 .chip:active,
 .chip[aria-pressed="true"],
 .chip.is-active {
-  background: rgba(255, 255, 255, 0.3); /* Figma onClick 30% */
+  background: rgba(255, 255, 255, 0.3);
   border-color: transparent;
-  transform: translateY(0); /* jokių pasislinkimų */
+  transform: translateY(0);
+  box-shadow: none; /* svarbu: jokio žiedo kai laikai */
 }
 
-/* po .chip:active bloko */
-.chip:focus,
-.chip:focus-visible {
+/* ŽIEDAS – tik kai NE :active (t.y. jau atleista) */
+.chip:focus:not(:active),
+.chip:focus-visible:not(:active) {
   outline: none;
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff; /* tas pats žiedas */
-  background: rgba(255, 255, 255, 0.2);
-  border-color: transparent;
-}
-
-/* FOCUS (keyboard) – dvigubas žiedas: baltas + mėlynas #3654FF) */
-.chip:focus-visible {
-  outline: none;
-  /* vidinis baltas + išorinis mėlynas žiedas (artimiausia CSS atitikmuo) */
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff;
-  background: rgba(255, 255, 255, 0.2); /* kaip Figma focus */
   border-color: transparent;
 }
 
+/* Pasirinktinai: jei nori to paties žiedo ir 'selected' būsenai */
+.chip[aria-pressed="true"]:not(:active),
+.chip.is-active:not(:active) {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff;
+}
+/* FOCUS BACKGROUND tik jei NESPAUDŽIAM (kad neuždengtų :active) */
+.chip:focus:not(:active):not([aria-pressed="true"]):not(.is-active) {
+  background: rgba(255, 255, 255, 0.2);
+}
 /* ========= Input bubble (multiline) ========= */
 /* Desktop (Figma: 480×120–200, r=10, bg #DEE3FF, border 1px #FCFCFC) */
 .input-wrap {
