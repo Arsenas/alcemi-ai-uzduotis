@@ -20,7 +20,7 @@ export default function App() {
 
   // autosize
   const taRef = useRef<HTMLTextAreaElement>(null);
-  const MAX_H = 200;
+  const MAX_H = 200; // turi sutapti su CSS .input-wrap max-height
 
   function updateFade(el: HTMLTextAreaElement) {
     const wrap = el.closest(".input-wrap") as HTMLElement | null;
@@ -31,7 +31,6 @@ export default function App() {
     const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 0.5;
 
     wrap.classList.toggle("has-overflow", hasOverflow);
-    wrap.classList.toggle("scrolled", el.scrollTop > 0);
     wrap.classList.toggle("scrolled", !atTop); // viršaus fade
     wrap.classList.toggle("has-more-below", !atBottom); // apačios fade
   }
@@ -43,20 +42,39 @@ export default function App() {
     el.style.overflowY = el.scrollHeight > MAX_H ? "auto" : "hidden";
     updateFade(el);
   }
+
+  // focus + autosize kai atsidaro modalas / peršoka į "typing"
   useEffect(() => {
-    if (taRef.current) autoresize(taRef.current);
-  }, [open, query]);
+    if (!open) return;
+    if (view !== "typing") return;
+    const el = taRef.current;
+    if (!el) return;
+    // po render
+    requestAnimationFrame(() => {
+      el.focus();
+      el.selectionStart = el.value.length;
+      el.selectionEnd = el.value.length;
+      autoresize(el);
+    });
+  }, [open, view]);
 
   function pickChip(v: string) {
     setQuery(v);
     setView("typing");
+    // autosize kai state pasikeis
+    requestAnimationFrame(() => {
+      if (taRef.current) autoresize(taRef.current);
+    });
   }
+
   function submit() {
+    if (!query.trim()) return; // nieko neteikiam jei tuščia
     setTimeout(() => {
       setAnswer("Lorem ipsum response bubble…");
       setView("answer");
     }, 400);
   }
+
   function reset() {
     setQuery("");
     setAnswer("");
@@ -66,29 +84,35 @@ export default function App() {
   return (
     <div className="app-shell">
       <Background />
+
       {!open && (
         <AiButton
           onOpen={() => {
             setOpen(true);
             reset();
+            // užtikrinam fokusą kai modal atsidarys
+            requestAnimationFrame(() => {
+              if (taRef.current) taRef.current.focus();
+            });
           }}
         />
       )}
 
       <Modal open={open} onClose={() => setOpen(false)} title="Hello, what are you looking for today?">
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* Chips */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Chips items={CHIP_ITEMS} onPick={pickChip} />
         </div>
 
-        {/* DOCK ties modal apačia */}
+        {/* DOCK ties modal apačia (sticky mobilėje, absolute desktop) */}
         {view !== "answer" ? (
           <div className="input-dock">
             <form
+              className="input-wrap"
               onSubmit={(e) => {
                 e.preventDefault();
                 submit();
               }}
-              className="input-wrap"
             >
               <textarea
                 ref={taRef}
@@ -100,6 +124,13 @@ export default function App() {
                   autoresize(e.currentTarget);
                 }}
                 onScroll={(e) => updateFade(e.currentTarget)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    submit();
+                  }
+                }}
+                aria-label="Message"
               />
               <button type="submit" className="input-action" aria-label="Send or voice">
                 <VoiceIcon width={20} height={20} aria-hidden="true" focusable="false" />

@@ -10,14 +10,35 @@ type Props = {
   children: ReactNode;
 };
 
-function withBreakAfterLooking(text: string) {
-  const m = text.match(/^(.*\blooking)\b(.*)$/i);
+/**
+ * Įterpia DU galimus laužymo taškus:
+ * - MOBILE: prieš "looking"
+ * - DESKTOP: prieš "for today?"
+ * Kuris bus rodomas – valdoma CSS .break--mobile / .break--desktop
+ */
+function withResponsiveBreaks(text: string) {
+  // "Hello, what are you looking for today?"
+  // -> before="Hello, what are you", word="looking", after=" for today?"
+  const m = text.match(/^(.*?\bare you)\s+(looking)\b(.*)$/i);
   if (!m) return text;
+
+  const before = m[1];
+  const looking = m[2];
+  const after = m[3]; // starts with space: " for today?"
+
   return (
     <>
-      {m[1]}
-      <br />
-      {m[2].trimStart()}
+      {before}
+      {/* MOBILE break (prieš "looking") */}
+      <span className="break--mobile" aria-hidden="true">
+        <br />
+      </span>{" "}
+      {looking}
+      {/* DESKTOP break (prieš "for today?") */}{" "}
+      <span className="break--desktop" aria-hidden="true">
+        <br />
+      </span>
+      {after.trimStart()}
     </>
   );
 }
@@ -37,7 +58,7 @@ export default function Modal({ open, onClose, title, children }: Props) {
         setShow(false);
         setClosing(false);
         document.body.style.overflow = "";
-      }, 380); // sutampa su CSS close trukme
+      }, 380);
       return () => clearTimeout(t);
     }
   }, [open, show]);
@@ -76,7 +97,7 @@ export default function Modal({ open, onClose, title, children }: Props) {
 
           <div className="modal-col">
             <h1 id="modal-title" className="modal-title">
-              {withBreakAfterLooking(title)}
+              {withResponsiveBreaks(title)}
             </h1>
             <div className="modal-body">{children}</div>
           </div>

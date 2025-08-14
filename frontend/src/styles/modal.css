@@ -1,9 +1,15 @@
-/* ========= Modal (Figma match) ========= */
+/* =========================================================
+   Modal (Figma match) — cleaned & ordered
+   Desktop preserved; Mobile = 100vw x 100dvh + sticky input
+   ========================================================= */
 
-/* Dimensions */
+/* ---------- Variables ---------- */
 :root {
+  /* Base (used before desktop/mobile overrides) */
   --modal-w: 334px;
   --modal-h: 728px;
+
+  /* Desktop (>=1024px) */
   --modal-w-desktop: 1330px;
   --modal-h-desktop: 780px;
 
@@ -11,7 +17,7 @@
   --border-soft: rgba(255, 255, 255, 0.45);
 }
 
-/* Root */
+/* ---------- Root & Backdrop ---------- */
 .modal-root {
   position: fixed;
   inset: 0;
@@ -26,13 +32,11 @@
   opacity: 1;
   pointer-events: auto;
 }
-
 .modal-root.closing {
-  opacity: 1; /* palaikom matomumą per animaciją */
-  pointer-events: none; /* kad negalima būtų spausti */
+  opacity: 1;
+  pointer-events: none;
 }
 
-/* Backdrop */
 .backdrop {
   position: absolute;
   inset: 0;
@@ -44,12 +48,12 @@
   opacity: 1;
 }
 
-/* Card */
+/* ---------- Card (Desktop-first) ---------- */
 .modal-card {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); /* scale anim in modal-anim.css */
+  transform: translate(-50%, -50%); /* desktop centering */
   width: var(--modal-w);
   height: var(--modal-h);
   color: var(--text-on-dark);
@@ -65,12 +69,13 @@
   background-size: cover;
 }
 
+/* Desktop override */
 @media (min-width: 1024px) {
   .modal-card {
     width: var(--modal-w-desktop);
     height: var(--modal-h-desktop);
     border-radius: 28px;
-    background-color: #02092e; /* saugai – bazė po SVG */
+    background-color: #02092e;
     background-image: url("/img/background-gradient-desktop.svg");
     background-repeat: no-repeat;
     background-position: center;
@@ -78,7 +83,7 @@
   }
 }
 
-/* Inner container */
+/* ---------- Inner container ---------- */
 .modal-ctr {
   position: relative;
   z-index: 1;
@@ -90,36 +95,34 @@
   height: 100%;
 }
 
-/* 480px centrinis stulpelis (apgaubia H1 + chips + input) */
+/* Central column (wraps H1 + chips + children) */
 .modal-col {
-  width: 480px; /* Figma: Fixed 480 */
+  width: 480px; /* Figma fixed 480 (desktop) */
   max-width: calc(100vw - 64px);
-  margin: 140px auto 0; /* Figma: turinio blokas žemiau nav ~86px */
+  margin: 140px auto 0; /* content sits below nav */
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 48px; /* Figma: tarp H1 ir chips */
+  gap: 48px; /* H1 ↕ chips spacing */
 }
 
-/* ===================== NAV (ikonos + mobile logo) ===================== */
+/* ---------- Nav (icons + optional mobile logo) ---------- */
 .modal-head {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* kairė / dešinė */
+  justify-content: space-between;
   width: 100%;
   min-height: 24px;
   position: relative;
 }
-
-/* bendras ikonų mygtukas – didelis tap target, 24px svg viduje */
 .icon-btn {
   appearance: none;
   border: none;
   background: transparent;
-  padding: 8px; /* kad hit-area būtų >24px */
+  padding: 8px; /* tap target */
   margin: 0;
-  width: 40px; /* hit-area */
-  height: 40px; /* hit-area */
+  width: 40px;
+  height: 40px;
   display: inline-grid;
   place-items: center;
   cursor: pointer;
@@ -139,7 +142,6 @@
   outline-offset: 2px;
 }
 
-/* mobile logotipas – paslėptas desktop */
 .head-logo-mobile {
   display: none;
 }
@@ -148,18 +150,13 @@
   width: auto;
   display: block;
 }
-
-/* back rodom desktop/tablet, mobile – nerodom (vietoj jo logo) */
 .head-back {
   display: inline-grid;
 }
-
-/* spacer tik išlaiko 'space-between' kai kairėje rodom logo */
 .head-spacer {
   flex: 1 1 auto;
 }
 
-/* Desktop/Tablet (>=768px): back matomas, logo paslėptas */
 @media (min-width: 768px) {
   .modal-head .head-logo-mobile {
     display: none;
@@ -168,12 +165,10 @@
     display: inline-grid;
   }
 }
-
-/* Mobile (<768px): kairėje logo, back paslepiam */
 @media (max-width: 767.98px) {
   .modal-head {
     padding: 16px 20px;
-  } /* Figma mobile */
+  } /* mobile nav padding */
   .head-logo-mobile {
     display: inline-block;
   }
@@ -182,39 +177,56 @@
   }
 }
 
-/* TITLE – po NAV */
+/* ---------- Title ---------- */
 .modal-title {
-  margin: 0; /* tarpus valdo .modal-col gap */
+  margin: 0;
   text-align: center;
   font-family: "Satoshi", sans-serif;
-  font-weight: 400; /* Regular */
-  font-size: clamp(24px, 2.2vw, 32px); /* max ≈ 32px kaip Figma H1 */
+  font-weight: 400;
+  font-size: clamp(24px, 2.2vw, 32px);
   line-height: 1.2; /* 120% */
-  letter-spacing: 0; /* 0% */
-  color: #fcfcfc; /* text/inverted */
+  letter-spacing: 0;
+  color: #fcfcfc;
 }
 
-/* Content area (grid) */
+/* Responsive line-break helpers:
+   - Desktop/tablet shows break BEFORE "for today?"
+   - Mobile shows break BEFORE "looking" */
+.break--desktop {
+  display: inline;
+}
+.break--mobile {
+  display: none;
+}
+@media (max-width: 480px) {
+  .break--desktop {
+    display: none;
+  }
+  .break--mobile {
+    display: inline;
+  }
+}
+
+/* ---------- Body ---------- */
 .modal-body {
   display: flex;
   flex-direction: column;
-  align-items: center; /* sulygiuojam chips centrui */
-  gap: 20px; /* jeigu tarp chips ir bubble reikia tarpo */
-  padding: 0; /* col valdo plotį */
+  align-items: center;
+  gap: 20px; /* between chips and input group if needed */
+  padding: 0;
 }
 
-/* Desktop/Tablet: 2 centravimo eilės (4 + 2) */
+/* ---------- Chips (desktop) ---------- */
 .suggestions {
   display: flex !important;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 16px; /* <- tavo prašytas tarpas */
-  max-width: 480px; /* kad kompozicija laikytųsi po H1 */
+  gap: 16px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
-/* DEFAULT */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -222,25 +234,6 @@
   height: 47px; /* Figma: 47 */
   padding: 0 12px; /* Figma: 12 */
   border-radius: 10px; /* Figma: 10 */
-  border: 1px solid transparent; /* no visible border */
-  background: rgba(255, 255, 255, 0.1); /* Figma default 10% */
-  color: #fff;
-  font-weight: 400;
-  font-size: 18px; /* kaip Figma screens */
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease;
-}
-
-/* DEFAULT */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 47px;
-  padding: 0 12px;
-  border-radius: 10px;
   border: 1px solid transparent;
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
@@ -251,46 +244,41 @@
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease;
 }
-
-/* HOVER */
 .chip:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: #d9d9d9;
 }
-
-/* ACTIVE / SELECTED – paspaudimo metu be žiedo */
+/* Active/Selected — no ring while pressing */
 .chip:active,
 .chip[aria-pressed="true"],
 .chip.is-active {
   background: rgba(255, 255, 255, 0.3);
   border-color: transparent;
   transform: translateY(0);
-  box-shadow: none; /* svarbu: jokio žiedo kai laikai */
+  box-shadow: none;
 }
-
-/* ŽIEDAS – tik kai NE :active (t.y. jau atleista) */
+/* Ring only after release (focus but not active) */
 .chip:focus:not(:active),
 .chip:focus-visible:not(:active) {
   outline: none;
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff;
   border-color: transparent;
 }
-
-/* Pasirinktinai: jei nori to paties žiedo ir 'selected' būsenai */
 .chip[aria-pressed="true"]:not(:active),
 .chip.is-active:not(:active) {
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff;
 }
-/* FOCUS BACKGROUND tik jei NESPAUDŽIAM (kad neuždengtų :active) */
+/* Optional focus bg only when not active/selected */
 .chip:focus:not(:active):not([aria-pressed="true"]):not(.is-active) {
   background: rgba(255, 255, 255, 0.2);
 }
-/* ========= Input bubble (multiline) ========= */
+
+/* ---------- Input bubble (desktop) ---------- */
 /* Desktop (Figma: 480×120–200, r=10, bg #DEE3FF, border 1px #FCFCFC) */
 .input-wrap {
   width: 480px;
   min-height: 120px;
-  max-height: 200px; /* viršutinė riba visam burbului */
+  max-height: 200px; /* entire bubble */
   display: grid;
   grid-template-columns: 1fr 44px;
   align-items: end;
@@ -303,50 +291,39 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   transition: box-shadow 0.18s ease, border-color 0.12s ease;
   position: relative;
-  overflow: hidden; /* kad gradientas laikytųsi viduje su radius */
+  overflow: hidden; /* needed for fade masks + radius */
 }
-
-/* Faded top mask – rodom tik kai yra overflow ir scrollTop>0 */
+/* Fade top — visible when overflow + scrolled from top */
 .input-wrap::after {
   content: "";
   position: absolute;
-  left: 16px; /* sutampa su burbulo padding */
+  left: 16px;
   right: 16px;
   top: 16px;
-  height: 40px; /* fade aukštis; pakoreguok pagal akį (16–24px) */
-  pointer-events: none; /* kad netrukdytų click/scroll */
+  height: 40px;
+  pointer-events: none;
   opacity: 0;
   transition: opacity 0.12s ease;
-
-  /* tas pats fonas kaip burbulo (#DEE3FF) -> į skaidrumą */
   background: linear-gradient(to bottom, rgba(222, 227, 255, 1), rgba(222, 227, 255, 0));
 }
-/* Faded bottom mask – rodom kai yra overflow ir dar yra turinio žemiau */
+/* Fade bottom — visible when overflow + not at bottom */
 .input-wrap::before {
   content: "";
   position: absolute;
-  left: 16px; /* sutampa su burbulo padding */
-  /* jei nori nekirsti su mygtuku, naudok: right: 72px; (16 + 44 + 12) */
-  right: 72px;
+  left: 16px;
+  right: 72px; /* keep clear of mic (16 + 12 + 44) */
   bottom: 10px;
-  height: 40px; /* 16–24px jei nori plonesnio */
+  height: 40px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.12s ease;
   background: linear-gradient(to top, rgba(222, 227, 255, 1), rgba(222, 227, 255, 0));
 }
-
-/* jau turim top fade */
+/* Toggle fades */
 .input-wrap.has-overflow.scrolled::after {
   opacity: 1;
 }
-
-/* apačios fade – kai yra overflow ir nesame pačiame dugne */
 .input-wrap.has-overflow.has-more-below::before {
-  opacity: 1;
-}
-/* įjungiam fade tik tada, kai tikrai reikia */
-.input-wrap.has-overflow.scrolled::after {
   opacity: 1;
 }
 
@@ -356,7 +333,7 @@
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
 }
 
-/* Tekstas (textarea) */
+/* Textarea */
 .input-field {
   box-sizing: border-box;
   background: transparent;
@@ -372,54 +349,25 @@
   font-size: 16px;
   color: #444e85;
 
-  /* paslepti juostas ir neleisti horizontalaus scroll */
   overflow-x: hidden;
-  overflow-y: hidden; /* iki ribos – be scroll */
+  overflow-y: hidden; /* until JS enables auto */
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* senas Edge/IE */
+  -ms-overflow-style: none; /* old Edge/IE */
 }
 .input-field::-webkit-scrollbar {
-  /* Chrome/Safari */
   width: 0;
   height: 0;
 }
-
-/* Užpildyta ARBA fokusas -> text/default */
 .input-field:focus,
 .input-field:not(:placeholder-shown) {
   color: #0a1444;
 }
-
-/* Placeholder */
 .input-field::placeholder {
   color: #444e85;
   opacity: 0.9;
 }
 
-/* Dock sluoksnis prie modal apačios: input fiksuotas ir auga į viršų */
-.input-dock {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 56px; /* pakelk jei per arti footerio */
-  display: flex;
-  justify-content: center;
-  z-index: 2; /* virš background ir near footer */
-  pointer-events: none; /* kad nepagaudytų klikų aplink formą */
-}
-/* pati forma turi būti klikintina */
-.input-dock .input-wrap {
-  pointer-events: auto;
-}
-
-/* mobile – šiek tiek arčiau apačios */
-@media (max-width: 720px) {
-  .input-dock {
-    bottom: 48px;
-  }
-}
-
-/* Mygtukas su SVG */
+/* Input CTA button */
 .input-action {
   appearance: none;
   border: none;
@@ -449,29 +397,22 @@
   display: none;
 }
 
-/* Mobile */
-@media (max-width: 720px) {
-  .input-wrap {
-    min-height: 96px;
-    max-height: 168px;
-    grid-template-columns: 1fr 32px;
-    padding: 16px;
-  }
-  .input-field {
-    min-height: 64px;
-    max-height: 136px; /* 168 - (16+16) padding */
-    font-size: 15px;
-  }
-  .input-action {
-    width: 40px;
-    height: 40px;
-  }
-  .input-action svg {
-    width: 18px;
-    height: 18px;
-  }
+/* Desktop input docking (absolute bottom inside modal) */
+.input-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 56px; /* tune if too close to footer */
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
 }
-/* Footer logo */
+.input-dock .input-wrap {
+  pointer-events: auto;
+}
+
+/* ---------- Footer ---------- */
 .modal-footer {
   position: absolute;
   left: 22px;
@@ -488,7 +429,177 @@
   display: block;
 }
 
-/* Reduced motion */
+/* ---------- Desktop-specific ---------- */
+@media (min-width: 1024px) {
+  /* base above = desktop */
+}
+
+/* ========= MOBILE (≤480px) — 100vw x 100dvh, radius 20px ========= */
+@media (max-width: 480px) {
+  /* Atjungiame desktop centering ant root */
+  .modal-root {
+    justify-content: initial !important;
+    align-items: initial !important;
+  }
+
+  /* Full viewport; reaguoja į keyboard su 100dvh */
+  .modal-card {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    transform: none !important;
+    margin: 0 !important;
+    border-radius: 20px;
+    background-color: #02092e;
+    background-image: url("/img/background-gradient-mobile.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    border: none;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .modal-ctr {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* NAV – fixed 334×38 centered */
+  .modal-head {
+    width: 334px;
+    height: 38px;
+    margin: 0 auto;
+    justify-content: space-between;
+    padding: 0;
+  }
+
+  /* Central column (H1 + chips) */
+  .modal-col {
+    width: 334px;
+    max-width: calc(100vw - 32px);
+    margin: 200px auto 0; /* lower block like Figma */
+    gap: 48px;
+    align-items: stretch;
+    flex: 0 0 auto;
+  }
+
+  /* H1 size + center */
+  .modal-title {
+    width: 286px;
+    margin-inline: auto;
+    text-align: center;
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  /* Body – scrolls under sticky input */
+  .modal-body {
+    width: 100%;
+    max-width: none; /* <— was 334px */
+    margin: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: auto;
+    /* only tiny reserve; input handles its own bottom gap */
+    padding-bottom: env(safe-area-inset-bottom, 0px); /* <— was big calc(...) */
+  }
+
+  /* CHIPS: edge-to-edge row with horizontal scroll */
+  .suggestions {
+    display: flex !important;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    /* pull to the card edges while keeping inner 16px padding */
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .suggestions::-webkit-scrollbar {
+    display: none;
+  }
+  .chips-break {
+    display: none !important;
+  }
+
+  /* Sticky input at the very bottom (moves with keyboard) */
+  .input-dock {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: auto;
+    z-index: 3;
+    pointer-events: none;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to bottom, rgba(2, 9, 46, 0), rgba(2, 9, 46, 0.06));
+  }
+  .input-dock .input-wrap {
+    pointer-events: auto;
+  }
+
+  /* Input bubble – 334px, 96–200 */
+  .input-wrap {
+    width: min(334px, calc(100vw - 32px)); /* side gutters */
+    min-height: 96px;
+    max-height: 200px;
+    grid-template-columns: 1fr 40px;
+    padding: 16px;
+    margin: 0 auto;
+    margin-top: 230px;
+    box-sizing: border-box;
+  }
+  .input-field {
+    min-height: 64px;
+    max-height: 168px;
+    font-size: 15px;
+  }
+  .input-action {
+    width: 40px;
+    height: 40px;
+  }
+  .input-action svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Fade not to collide with mic */
+  .input-wrap::after {
+    left: 16px;
+    right: 72px;
+    top: 16px;
+    height: 24px;
+  }
+  .input-wrap::before {
+    left: 16px;
+    right: 72px;
+    bottom: 16px;
+    height: 24px;
+  }
+
+  /* Mobile – "Powered by" hidden */
+  .modal-footer {
+    display: none !important;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .backdrop {
     transition: none !important;
