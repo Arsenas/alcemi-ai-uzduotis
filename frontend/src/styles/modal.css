@@ -27,6 +27,11 @@
   pointer-events: auto;
 }
 
+.modal-root.closing {
+  opacity: 1; /* palaikom matomumą per animaciją */
+  pointer-events: none; /* kad negalima būtų spausti */
+}
+
 /* Backdrop */
 .backdrop {
   position: absolute;
@@ -123,49 +128,96 @@
   height: 100%;
 }
 
-/* NAV (be dėžučių) */
-.modal-head {
-  width: 100%;
-  position: relative;
-  padding-top: 16px;
-  min-height: 40px;
-}
-.modal-head .ghost {
-  background: transparent !important;
-  border: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  width: 40px;
-  height: 40px;
-  color: #ffffff;
-  position: absolute;
-  top: 12px;
-  transition: transform 0.12s ease, opacity 0.12s ease;
-}
-.modal-head .ghost:first-child {
-  left: 16px;
-} /* back */
-.modal-head .ghost:last-child {
-  right: 16px;
-} /* close */
-.modal-head .ghost:hover {
-  transform: translateY(-1px);
-  opacity: 0.9;
-}
-.modal-head .ghost:focus-visible {
-  outline: 2px solid #8ab4ff;
-  outline-offset: 2px;
-}
-
 /* 480px centrinis stulpelis (apgaubia H1 + chips + input) */
 .modal-col {
   width: 480px; /* Figma: Fixed 480 */
   max-width: calc(100vw - 64px);
-  margin: 150px auto;
+  margin: 86px auto 0; /* Figma: turinio blokas žemiau nav ~86px */
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* kad vidus būtų 100% pločio */
-  gap: 48px; /* Figma: Gap 48px tarp H1 ir chips */
+  align-items: stretch;
+  gap: 48px; /* Figma: tarp H1 ir chips */
+}
+
+/* ===================== NAV (ikonos + mobile logo) ===================== */
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* kairė / dešinė */
+  width: 100%;
+  min-height: 24px;
+  position: relative;
+}
+
+/* bendras ikonų mygtukas – didelis tap target, 24px svg viduje */
+.icon-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 8px; /* kad hit-area būtų >24px */
+  margin: 0;
+  width: 40px; /* hit-area */
+  height: 40px; /* hit-area */
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  color: #fff;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.icon-btn img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.icon-btn:hover {
+  opacity: 0.9;
+}
+.icon-btn:focus-visible {
+  outline: 2px solid #8ab4ff;
+  outline-offset: 2px;
+}
+
+/* mobile logotipas – paslėptas desktop */
+.head-logo-mobile {
+  display: none;
+}
+.head-logo-mobile img {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
+/* back rodom desktop/tablet, mobile – nerodom (vietoj jo logo) */
+.head-back {
+  display: inline-grid;
+}
+
+/* spacer tik išlaiko 'space-between' kai kairėje rodom logo */
+.head-spacer {
+  flex: 1 1 auto;
+}
+
+/* Desktop/Tablet (>=768px): back matomas, logo paslėptas */
+@media (min-width: 768px) {
+  .modal-head .head-logo-mobile {
+    display: none;
+  }
+  .head-back {
+    display: inline-grid;
+  }
+}
+
+/* Mobile (<768px): kairėje logo, back paslepiam */
+@media (max-width: 767.98px) {
+  .modal-head {
+    padding: 16px 20px;
+  } /* Figma mobile */
+  .head-logo-mobile {
+    display: inline-block;
+  }
+  .head-back {
+    display: none;
+  }
 }
 
 /* TITLE – po NAV */
@@ -249,9 +301,10 @@
   border-color: transparent;
 }
 
-/* Input bubble turi būti 100% konteinerio pločio (t.y., 480px) */
-.input-bar {
-  width: 100% !important; /* vietoj buvusio 480 – paveldi iš .modal-col */
+/* ========= Input bubble (multiline) ========= */
+/* Desktop (Figma: 480×120–200, r=10, bg #DEE3FF, border 1px #FCFCFC) */
+.input-wrap {
+  width: 480px;
   min-height: 120px;
   max-height: 200px;
   display: grid;
@@ -263,28 +316,95 @@
   background: #dee3ff;
   border: 1px solid #fcfcfc;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  transition: box-shadow 0.18s ease, border-color 0.12s ease;
 }
 
-/* Mobile: viena horizontali eilė su scroll (kaip Figma mobile) */
+.input-wrap:focus-within {
+  border-width: 2px;
+  border-color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+}
+/* Tekstas */
+.input-field {
+  background: transparent;
+  border: 0;
+  outline: 0;
+  resize: none;
+  width: 100%;
+  min-height: 88px;
+  max-height: 168px;
+  overflow: auto;
+  font-family: "Satoshi", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.35;
+  color: #444e85;
+}
+
+.input-field:focus {
+  color: #0a1444;
+}
+
+.input-field::placeholder {
+  color: #444e85;
+  opacity: 0.9;
+}
+
+/* Mygtukas su SVG */
+.input-action {
+  appearance: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin-left: 10px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: linear-gradient(180deg, #0a186a, #142fd0);
+  box-shadow: 0 0 10px rgba(20, 47, 208, 0.35);
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+.input-action:hover {
+  box-shadow: 0 0 14px rgba(20, 47, 208, 0.45);
+}
+
+.input-action:active {
+  transform: none;
+}
+
+.input-action svg {
+  width: 30px;
+  height: 30px;
+}
+.input-action svg rect {
+  display: none;
+}
+
+/* Mobile */
 @media (max-width: 720px) {
-  .suggestions {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    gap: 16px;
-    max-width: none;
+  .input-wrap {
+    min-height: 96px;
+    max-height: 168px;
+    grid-template-columns: 1fr 32px;
+    padding: 16px;
   }
-  .suggestions::-webkit-scrollbar {
-    display: none;
+  .input-field {
+    min-height: 64px;
+    max-height: 136px;
+    font-size: 15px;
   }
-  .suggestions {
-    scrollbar-width: none;
-  } /* Firefox */
-  .chips-break {
-    display: none;
-  } /* nelaužom eilės mobile */
+  .input-action {
+    width: 40px;
+    height: 40px;
+  }
+  .input-action svg {
+    width: 18px;
+    height: 18px;
+  }
 }
-
 /* Footer logo */
 .modal-footer {
   position: absolute;
@@ -296,8 +416,8 @@
   align-items: center;
 }
 .powered-by {
-  height: 18px;
-  width: auto;
+  height: 25px;
+  width: 61px;
   opacity: 0.9;
   display: block;
 }

@@ -24,17 +24,23 @@ function withBreakAfterLooking(text: string) {
 
 export default function Modal({ open, onClose, title, children }: Props) {
   const [show, setShow] = useState(open);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     if (open) {
       setShow(true);
+      setClosing(false);
       document.body.style.overflow = "hidden";
-    } else {
-      const t = setTimeout(() => setShow(false), 260);
-      document.body.style.overflow = "";
+    } else if (show) {
+      setClosing(true);
+      const t = setTimeout(() => {
+        setShow(false);
+        setClosing(false);
+        document.body.style.overflow = "";
+      }, 380); // sutampa su CSS close trukme
       return () => clearTimeout(t);
     }
-  }, [open]);
+  }, [open, show]);
 
   useEffect(() => {
     if (!open) return;
@@ -46,31 +52,35 @@ export default function Modal({ open, onClose, title, children }: Props) {
   if (!show) return null;
 
   return (
-    <div className={`modal-root ${open ? "open" : ""}`} role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div
+      className={`modal-root ${open || closing ? "open" : ""} ${closing ? "closing" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
       <div className="backdrop" onClick={onClose} />
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-ctr">
-          {/* NAV BAR */}
-          <div className="modal-head">
-            <button className="ghost" aria-label="Back">
-              ←
+          <div className="modal-head" role="toolbar" aria-label="AI modal navigation">
+            <a className="head-logo-mobile" href="/" aria-label="Alcemi home">
+              <img src="/img/logo-mobile.svg" alt="Alcemi" />
+            </a>
+            <button className="icon-btn head-back" aria-label="Back">
+              <img src="/img/back.svg" alt="" aria-hidden="true" />
             </button>
-            <button className="ghost" aria-label="Close" onClick={onClose}>
-              ×
+            <div className="head-spacer" aria-hidden />
+            <button className="icon-btn head-close" aria-label="Close" onClick={onClose}>
+              <img src="/img/close.svg" alt="" aria-hidden="true" />
             </button>
           </div>
 
-          {/* VIENAS KONTEINERIS 480px pločio */}
           <div className="modal-col">
             <h1 id="modal-title" className="modal-title">
               {withBreakAfterLooking(title)}
             </h1>
-
-            {/* čia keliauja children: chips + input bubble */}
             <div className="modal-body">{children}</div>
           </div>
 
-          {/* FOOTER */}
           <div className="modal-footer">
             <img className="powered-by" src="/img/logo-desktop.svg" alt="Powered by Alcemi" />
           </div>

@@ -1,19 +1,41 @@
 @media (prefers-reduced-motion: no-preference) {
-  .modal-card {
+  /* OPEN */
+  .modal-root.open .modal-card {
     transform-origin: 50% 85%;
     animation: modal-grow 0.35s ease forwards;
   }
-  @media (min-width: 1024px) {
-    .modal-card {
-      transform-origin: 50% 50%;
-    }
-  }
-  .modal-body {
+  .modal-root.open .modal-body {
     opacity: 0;
     animation: fade-in 0.25s ease forwards;
-    animation-delay: 0.25s;
+    animation-delay: 0.2s;
+  }
+
+  /* CLOSE (reverse) */
+  .modal-root.closing .modal-card {
+    transform-origin: 50% 85%;
+    animation: modal-shrink 0.38s ease forwards; /* ~380ms -> JS timeout 380ms */
+  }
+  .modal-root.closing .modal-body {
+    animation: fade-out 0.18s ease forwards;
+  }
+  .modal-root.closing .backdrop {
+    opacity: 0; /* fonas blunka užsidarant */
+  }
+
+  /* Jei open + closing kartu → closing laimi */
+  .modal-root.open.closing .modal-card {
+    animation: modal-shrink 0.38s ease forwards !important;
+  }
+  .modal-root.open.closing .modal-body {
+    animation: fade-out 0.18s ease forwards !important;
+  }
+
+  /* optional: per uždarymą išjunk klikus */
+  .modal-root.closing {
+    pointer-events: none;
   }
 }
+
 @keyframes modal-grow {
   from {
     transform: translate(-50%, -50%) scale(0.86);
@@ -26,8 +48,25 @@
     opacity: 1;
   }
 }
+@keyframes modal-shrink {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 20px;
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.86);
+    border-radius: 30px;
+    opacity: 0;
+  }
+}
 @keyframes fade-in {
   to {
     opacity: 1;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
   }
 }

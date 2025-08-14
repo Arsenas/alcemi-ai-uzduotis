@@ -8,6 +8,9 @@ import Modal from "./app/Modal";
 import Chips from "./app/Chips";
 import "./styles/chips.css";
 
+// SVG kaip React komponentas (failas yra src/assets/voice.svg)
+import VoiceIcon from "./assets/voice.svg?react";
+
 type View = "chips" | "typing" | "answer";
 const CHIP_ITEMS = ["Product", "Information", "Support", "Brand assets", "Consultation", "Dresses for summer"];
 
@@ -44,10 +47,12 @@ export default function App() {
           }}
         />
       )}
+
       <Modal open={open} onClose={() => setOpen(false)} title="Hello, what are you looking for today?">
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
           <Chips items={CHIP_ITEMS} onPick={pickChip} />
         </div>
+
         <div style={{ minHeight: 80 }}>
           {view !== "answer" ? (
             <form
@@ -55,47 +60,18 @@ export default function App() {
                 e.preventDefault();
                 submit();
               }}
+              className="input-wrap"
             >
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  borderRadius: 14,
-                  padding: "10px 12px",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                }}
-              >
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ask anything…"
-                  style={{
-                    flex: 1,
-                    background: "transparent",
-                    border: "none",
-                    color: "#FCFCFC",
-                    fontSize: 16,
-                    outline: "none",
-                  }}
-                />
-                <button
-                  type="submit"
-                  aria-label="Send"
-                  style={{
-                    width: 34,
-                    height: 34,
-                    borderRadius: 9999,
-                    border: "none",
-                    background: "#1632CD",
-                    color: "#fff",
-                    cursor: "pointer",
-                  }}
-                >
-                  🎤
-                </button>
-              </div>
+              <textarea
+                className="input-field"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Ask anything…"
+              />
+              <button type="submit" className="input-action" aria-label="Send or voice">
+                {/* pats SVG yra mygtuko turinys */}
+                <VoiceIcon width={20} height={20} aria-hidden="true" focusable="false" />
+              </button>
             </form>
           ) : (
             <div
