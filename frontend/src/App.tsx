@@ -25,9 +25,15 @@ export default function App() {
   function updateFade(el: HTMLTextAreaElement) {
     const wrap = el.closest(".input-wrap") as HTMLElement | null;
     if (!wrap) return;
+
     const hasOverflow = el.scrollHeight > el.clientHeight + 0.5;
+    const atTop = el.scrollTop <= 0;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 0.5;
+
     wrap.classList.toggle("has-overflow", hasOverflow);
     wrap.classList.toggle("scrolled", el.scrollTop > 0);
+    wrap.classList.toggle("scrolled", !atTop); // viršaus fade
+    wrap.classList.toggle("has-more-below", !atBottom); // apačios fade
   }
 
   function autoresize(el: HTMLTextAreaElement) {

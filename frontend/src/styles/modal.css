@@ -321,7 +321,30 @@
   /* tas pats fonas kaip burbulo (#DEE3FF) -> į skaidrumą */
   background: linear-gradient(to bottom, rgba(222, 227, 255, 1), rgba(222, 227, 255, 0));
 }
+/* Faded bottom mask – rodom kai yra overflow ir dar yra turinio žemiau */
+.input-wrap::before {
+  content: "";
+  position: absolute;
+  left: 16px; /* sutampa su burbulo padding */
+  /* jei nori nekirsti su mygtuku, naudok: right: 72px; (16 + 44 + 12) */
+  right: 72px;
+  bottom: 10px;
+  height: 40px; /* 16–24px jei nori plonesnio */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  background: linear-gradient(to top, rgba(222, 227, 255, 1), rgba(222, 227, 255, 0));
+}
 
+/* jau turim top fade */
+.input-wrap.has-overflow.scrolled::after {
+  opacity: 1;
+}
+
+/* apačios fade – kai yra overflow ir nesame pačiame dugne */
+.input-wrap.has-overflow.has-more-below::before {
+  opacity: 1;
+}
 /* įjungiam fade tik tada, kai tikrai reikia */
 .input-wrap.has-overflow.scrolled::after {
   opacity: 1;
