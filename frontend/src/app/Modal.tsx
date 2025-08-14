@@ -60,15 +60,17 @@ export default function Modal({ open, onClose, title, children }: Props) {
             </button>
           </div>
 
-          {/* H1 */}
-          <h1 id="modal-title" className="modal-title">
-            {withBreakAfterLooking(title)}
-          </h1>
+          {/* VIENAS KONTEINERIS 480px pločio */}
+          <div className="modal-col">
+            <h1 id="modal-title" className="modal-title">
+              {withBreakAfterLooking(title)}
+            </h1>
 
-          {/* TURINIO BLOKAS */}
-          <div className="modal-body">{children}</div>
+            {/* čia keliauja children: chips + input bubble */}
+            <div className="modal-body">{children}</div>
+          </div>
 
-          {/* FOOTER LOGO */}
+          {/* FOOTER */}
           <div className="modal-footer">
             <img className="powered-by" src="/img/logo-desktop.svg" alt="Powered by Alcemi" />
           </div>

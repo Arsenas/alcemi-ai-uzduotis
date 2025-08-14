@@ -16,13 +16,20 @@
   font-size: 16px;
   box-shadow: 0 0 30px 1px var(--elev-50);
   cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ai-fab:hover {
+  background: #2d46d9;
+  box-shadow: 0 0 35px 3px var(--elev-50);
 }
 
 .ai-fab__label {
   line-height: 1;
 }
 
-.ai-fab__icon {
-  display: inline-block;
-  transform: translateY(1px);
+.ai-fab__icon img {
+  display: block;
+  width: 18.33px;
+  height: 19.24px;
 }

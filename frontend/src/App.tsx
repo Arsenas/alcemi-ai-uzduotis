@@ -36,12 +36,14 @@ export default function App() {
   return (
     <div className="app-shell">
       <Background />
-      <AiButton
-        onOpen={() => {
-          setOpen(true);
-          reset();
-        }}
-      />
+      {!open && (
+        <AiButton
+          onOpen={() => {
+            setOpen(true);
+            reset();
+          }}
+        />
+      )}
       <Modal open={open} onClose={() => setOpen(false)} title="Hello, what are you looking for today?">
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
           <Chips items={CHIP_ITEMS} onPick={pickChip} />

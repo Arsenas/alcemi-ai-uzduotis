@@ -1,10 +1,17 @@
-.chips-row {
+/* horizontalus scroll – tik už modalo konteksto */
+.chips-inline {
   display: flex;
   gap: 10px;
   overflow-x: auto;
   padding: 8px 4px;
+  scrollbar-width: none;
 }
-.chip {
+.chips-inline::-webkit-scrollbar {
+  display: none;
+}
+
+/* CHIPS tik šioje inline juostoje */
+.chips-inline .chip {
   height: 47px;
   padding: 12px;
   border-radius: 10px;
@@ -17,23 +24,16 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.chip:hover {
+.chips-inline .chip:hover {
   background: rgba(255, 255, 255, 0.2);
 }
-.chip:focus-visible {
+.chips-inline .chip:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 6px #3654ff, 0 0 0 8px #ffffff;
+  box-shadow: 0 0 0 6px #3654ff, 0 0 0 8px #fff;
   background: rgba(255, 255, 255, 0.2);
   border-color: transparent;
 }
-.chip[aria-pressed="true"] {
+.chips-inline .chip[aria-pressed="true"] {
   background: rgba(255, 255, 255, 0.3);
   border-color: transparent;
-}
-.chips-row {
-  scrollbar-width: none; /* Firefox */
-}
-.chips-row::-webkit-scrollbar {
-  /* WebKit */
-  display: none;
 }

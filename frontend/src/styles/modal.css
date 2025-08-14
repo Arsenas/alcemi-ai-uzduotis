@@ -157,67 +157,132 @@
   outline-offset: 2px;
 }
 
+/* 480px centrinis stulpelis (apgaubia H1 + chips + input) */
+.modal-col {
+  width: 480px; /* Figma: Fixed 480 */
+  max-width: calc(100vw - 64px);
+  margin: 150px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* kad vidus būtų 100% pločio */
+  gap: 48px; /* Figma: Gap 48px tarp H1 ir chips */
+}
+
 /* TITLE – po NAV */
 .modal-title {
-  margin: 28px auto 14px;
+  margin: 0; /* tarpus kontroliuoja .modal-col gap */
   text-align: center;
-  font-weight: 500;
+  font-weight: 400; /* jei Figmoj 400 – pakeisk */
   font-size: clamp(22px, 2.6vw, 32px);
   line-height: 1.25;
   letter-spacing: 0.2px;
   color: rgba(255, 255, 255, 0.92);
-  max-width: 720px;
 }
 
 /* Content area (grid) */
 .modal-body {
-  width: 100%;
-  display: grid;
-  justify-content: center;
-  grid-template-columns: minmax(0, 920px);
-  grid-template-rows: auto 20px auto minmax(40px, 10vh) auto;
-  row-gap: 0;
-  padding: 0 24px;
-  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* sulygiuojam chips centrui */
+  gap: 20px; /* jeigu tarp chips ir bubble reikia tarpo */
+  padding: 0; /* col valdo plotį */
 }
 
-/* Chips – 4 per eilę, be border’io */
+/* Desktop/Tablet: 2 centravimo eilės (4 + 2) */
 .suggestions {
-  display: grid;
-  grid-template-columns: repeat(4, max-content);
+  display: flex !important;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 14px 16px;
+  align-items: center;
+  gap: 16px; /* <- tavo prašytas tarpas */
+  max-width: 480px; /* kad kompozicija laikytųsi po H1 */
+  margin: 0 auto;
 }
+
+/* "Break" po 4-o chip'o: pilna eilutė -> 5–6 krenta žemyn ir centruojasi */
+.chips-break {
+  flex-basis: 100%;
+  height: 0;
+  padding: 0;
+  margin: 0;
+}
+/* DEFAULT */
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 10px 16px;
-  border-radius: 14px;
-  border: none;
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 14px;
+  justify-content: center;
+  height: 47px; /* Figma: 47 */
+  padding: 0 12px; /* Figma: 12 */
+  border-radius: 10px; /* Figma: 10 */
+  border: 1px solid transparent; /* no visible border */
+  background: rgba(255, 255, 255, 0.1); /* Figma default 10% */
+  color: #fff;
+  font-weight: 400;
+  font-size: 18px; /* kaip Figma screens */
   line-height: 1;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: transform 0.12s ease, background 0.12s ease;
-}
-.chip:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.16);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease;
 }
 
-/* Responsyvus chipų kiekis */
+/* HOVER */
+.chip:hover {
+  background: rgba(255, 255, 255, 0.2); /* Figma hover 20% */
+  border-color: #d9d9d9; /* Figma border/secondary */
+}
+
+/* ON CLICK / SELECTED (paliekamas vizualas) */
+.chip:active,
+.chip[aria-pressed="true"],
+.chip.is-active {
+  background: rgba(255, 255, 255, 0.3); /* Figma onClick 30% */
+  border-color: transparent;
+  transform: translateY(0); /* jokių pasislinkimų */
+}
+
+/* FOCUS (keyboard) – dvigubas žiedas: baltas + mėlynas #3654FF) */
+.chip:focus-visible {
+  outline: none;
+  /* vidinis baltas + išorinis mėlynas žiedas (artimiausia CSS atitikmuo) */
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff;
+  background: rgba(255, 255, 255, 0.2); /* kaip Figma focus */
+  border-color: transparent;
+}
+
+/* Input bubble turi būti 100% konteinerio pločio (t.y., 480px) */
+.input-bar {
+  width: 100% !important; /* vietoj buvusio 480 – paveldi iš .modal-col */
+  min-height: 120px;
+  max-height: 200px;
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  align-items: end;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #dee3ff;
+  border: 1px solid #fcfcfc;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* Mobile: viena horizontali eilė su scroll (kaip Figma mobile) */
 @media (max-width: 720px) {
   .suggestions {
-    grid-template-columns: repeat(2, max-content);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    max-width: none;
   }
-}
-@media (min-width: 721px) and (max-width: 1023px) {
+  .suggestions::-webkit-scrollbar {
+    display: none;
+  }
   .suggestions {
-    grid-template-columns: repeat(3, max-content);
-  }
+    scrollbar-width: none;
+  } /* Firefox */
+  .chips-break {
+    display: none;
+  } /* nelaužom eilės mobile */
 }
 
 /* Footer logo */
