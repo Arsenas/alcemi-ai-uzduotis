@@ -58,32 +58,11 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 30px 80px rgba(0, 0, 0, 0.45);
   display: flex;
   overflow: hidden;
-
-  /* Wave gradient: kairė/dešinė aukščiau, centras žemiau */
-  background:
-    /* white lobes left/right (aukščiau) */ radial-gradient(
-      120% 90% at -5% 105%,
-      #ffffff 0%,
-      rgba(255, 255, 255, 0.85) 10%,
-      rgba(255, 255, 255, 0.55) 24%,
-      rgba(255, 255, 255, 0) 46%
-    ),
-    radial-gradient(
-      120% 90% at 105% 105%,
-      #ffffff 0%,
-      rgba(255, 255, 255, 0.85) 10%,
-      rgba(255, 255, 255, 0.55) 24%,
-      rgba(255, 255, 255, 0) 46%
-    ),
-    /* blue halo (žemiau centre – sudaro „įlinkį“) */
-      radial-gradient(
-        140% 120% at 50% 118%,
-        rgba(46, 92, 255, 0.6) 0%,
-        rgba(22, 51, 156, 0.36) 28%,
-        rgba(13, 31, 106, 0.16) 48%,
-        rgba(8, 18, 54, 0) 64%
-      ),
-    /* deep blue base */ linear-gradient(180deg, #0a153a 0%, #0c2270 28%, #1238a8 58%, #0d1f6a 82%, #081236 100%);
+  background-color: #02092e;
+  background-image: url("/img/background-gradient-mobile.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
 @media (min-width: 1024px) {
@@ -91,28 +70,11 @@
     width: var(--modal-w-desktop);
     height: var(--modal-h-desktop);
     border-radius: 28px;
-    background: radial-gradient(
-        120% 90% at -6% 106%,
-        #ffffff 0%,
-        rgba(255, 255, 255, 0.85) 10%,
-        rgba(255, 255, 255, 0.55) 24%,
-        rgba(255, 255, 255, 0) 44%
-      ),
-      radial-gradient(
-        120% 90% at 106% 106%,
-        #ffffff 0%,
-        rgba(255, 255, 255, 0.85) 10%,
-        rgba(255, 255, 255, 0.55) 24%,
-        rgba(255, 255, 255, 0) 44%
-      ),
-      radial-gradient(
-        130% 110% at 50% 120%,
-        rgba(46, 92, 255, 0.56) 0%,
-        rgba(22, 51, 156, 0.34) 26%,
-        rgba(13, 31, 106, 0.16) 46%,
-        rgba(8, 18, 54, 0) 62%
-      ),
-      linear-gradient(180deg, #0a153a 0%, #0c2270 28%, #1238a8 58%, #0d1f6a 82%, #081236 100%);
+    background-color: #02092e; /* saugai – bazė po SVG */
+    background-image: url("/img/background-gradient-desktop.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
   }
 }
 
@@ -132,7 +94,7 @@
 .modal-col {
   width: 480px; /* Figma: Fixed 480 */
   max-width: calc(100vw - 64px);
-  margin: 86px auto 0; /* Figma: turinio blokas žemiau nav ~86px */
+  margin: 140px auto 0; /* Figma: turinio blokas žemiau nav ~86px */
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -222,13 +184,14 @@
 
 /* TITLE – po NAV */
 .modal-title {
-  margin: 0; /* tarpus kontroliuoja .modal-col gap */
+  margin: 0; /* tarpus valdo .modal-col gap */
   text-align: center;
-  font-weight: 400; /* jei Figmoj 400 – pakeisk */
-  font-size: clamp(22px, 2.6vw, 32px);
-  line-height: 1.25;
-  letter-spacing: 0.2px;
-  color: rgba(255, 255, 255, 0.92);
+  font-family: "Satoshi", sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: clamp(24px, 2.2vw, 32px); /* max ≈ 32px kaip Figma H1 */
+  line-height: 1.2; /* 120% */
+  letter-spacing: 0; /* 0% */
+  color: #fcfcfc; /* text/inverted */
 }
 
 /* Content area (grid) */
@@ -251,13 +214,6 @@
   margin: 0 auto;
 }
 
-/* "Break" po 4-o chip'o: pilna eilutė -> 5–6 krenta žemyn ir centruojasi */
-.chips-break {
-  flex-basis: 100%;
-  height: 0;
-  padding: 0;
-  margin: 0;
-}
 /* DEFAULT */
 .chip {
   display: inline-flex;
@@ -292,6 +248,15 @@
   transform: translateY(0); /* jokių pasislinkimų */
 }
 
+/* po .chip:active bloko */
+.chip:focus,
+.chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff; /* tas pats žiedas */
+  background: rgba(255, 255, 255, 0.2);
+  border-color: transparent;
+}
+
 /* FOCUS (keyboard) – dvigubas žiedas: baltas + mėlynas #3654FF) */
 .chip:focus-visible {
   outline: none;
@@ -312,6 +277,7 @@
   align-items: end;
   gap: 12px;
   padding: 16px;
+  margin-top: 140px;
   border-radius: 10px;
   background: #dee3ff;
   border: 1px solid #fcfcfc;
@@ -337,17 +303,20 @@
   font-family: "Satoshi", sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 1.35;
-  color: #444e85;
+  line-height: 1.5; /* 150% kaip Figma */
+  color: #444e85; /* tuščio lauko (placeholder) bazė */
 }
 
-.input-field:focus {
-  color: #0a1444;
+./* Užpildyta ARBA fokusas -> text/default */
+.input-field:focus,
+.input-field:not(:placeholder-shown) {
+  color: #0a1444; /* text/default */
 }
 
+/* Placeholder spalva */
 .input-field::placeholder {
-  color: #444e85;
-  opacity: 0.9;
+  color: #444e85; /* text/secondary */
+  opacity: 0.9; /* jei nori 100% – pakeisk į 1 */
 }
 
 /* Mygtukas su SVG */
