@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Background from "./app/Background";
 import AiButton from "./app/AiButton";
 import "./styles/layout.css";
@@ -7,8 +7,6 @@ import "./styles/modal.css";
 import Modal from "./app/Modal";
 import Chips from "./app/Chips";
 import "./styles/chips.css";
-
-// SVG kaip React komponentas (failas yra src/assets/voice.svg)
 import VoiceIcon from "./assets/voice.svg?react";
 
 type View = "chips" | "typing" | "answer";
@@ -19,6 +17,29 @@ export default function App() {
   const [view, setView] = useState<View>("chips");
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
+
+  // autosize
+  const taRef = useRef<HTMLTextAreaElement>(null);
+  const MAX_H = 200;
+
+  function updateFade(el: HTMLTextAreaElement) {
+    const wrap = el.closest(".input-wrap") as HTMLElement | null;
+    if (!wrap) return;
+    const hasOverflow = el.scrollHeight > el.clientHeight + 0.5;
+    wrap.classList.toggle("has-overflow", hasOverflow);
+    wrap.classList.toggle("scrolled", el.scrollTop > 0);
+  }
+
+  function autoresize(el: HTMLTextAreaElement) {
+    el.style.height = "auto";
+    const next = Math.min(el.scrollHeight, MAX_H);
+    el.style.height = next + "px";
+    el.style.overflowY = el.scrollHeight > MAX_H ? "auto" : "hidden";
+    updateFade(el);
+  }
+  useEffect(() => {
+    if (taRef.current) autoresize(taRef.current);
+  }, [open, query]);
 
   function pickChip(v: string) {
     setQuery(v);
@@ -53,8 +74,9 @@ export default function App() {
           <Chips items={CHIP_ITEMS} onPick={pickChip} />
         </div>
 
-        <div style={{ minHeight: 80 }}>
-          {view !== "answer" ? (
+        {/* DOCK ties modal apačia */}
+        {view !== "answer" ? (
+          <div className="input-dock">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -63,31 +85,35 @@ export default function App() {
               className="input-wrap"
             >
               <textarea
+                ref={taRef}
                 className="input-field"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Ask anything…"
+                onInput={(e) => {
+                  setQuery(e.currentTarget.value);
+                  autoresize(e.currentTarget);
+                }}
+                onScroll={(e) => updateFade(e.currentTarget)}
               />
               <button type="submit" className="input-action" aria-label="Send or voice">
-                {/* pats SVG yra mygtuko turinys */}
                 <VoiceIcon width={20} height={20} aria-hidden="true" focusable="false" />
               </button>
             </form>
-          ) : (
-            <div
-              style={{
-                background: "rgba(255,255,255,0.08)",
-                color: "#E7E9F2",
-                borderRadius: 14,
-                padding: "12px 14px",
-                border: "1px solid rgba(255,255,255,0.18)",
-                maxWidth: "90%",
-              }}
-            >
-              {answer}
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              color: "#E7E9F2",
+              borderRadius: 14,
+              padding: "12px 14px",
+              border: "1px solid rgba(255,255,255,0.18)",
+              maxWidth: "90%",
+            }}
+          >
+            {answer}
+          </div>
+        )}
       </Modal>
     </div>
   );
