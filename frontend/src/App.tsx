@@ -20,7 +20,7 @@ export default function App() {
 
   // autosize
   const taRef = useRef<HTMLTextAreaElement>(null);
-  const MAX_H = 200; // turi sutapti su CSS .input-wrap max-height
+  const MAX_H = 136; // turi sutapti su CSS .input-wrap max-height
 
   function updateFade(el: HTMLTextAreaElement) {
     const wrap = el.closest(".input-wrap") as HTMLElement | null;
@@ -39,8 +39,8 @@ export default function App() {
     el.style.height = "auto";
     const next = Math.min(el.scrollHeight, MAX_H);
     el.style.height = next + "px";
-    el.style.overflowY = el.scrollHeight > MAX_H ? "auto" : "hidden";
-    updateFade(el);
+    // jei turinio daugiau nei telpa — ijungiam scroll
+    el.style.overflowY = el.scrollHeight > next ? "auto" : "hidden";
   }
 
   // focus + autosize kai atsidaro modalas / peršoka į "typing"
