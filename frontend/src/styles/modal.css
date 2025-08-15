@@ -502,22 +502,22 @@
     padding-bottom: 0;
   }
 
-  /* NAV */
+  /* NAV — Fixed 334×38, center; kairė dešinė po 28px */
+  /* NAV – vienodi top/side tarpai (kaip Figma) */
   .modal-head {
     width: 100%;
     margin: 0;
     height: auto;
-    padding: 16px var(--gutter);
+    padding: 16px var(--gutter); /* buvo 5px 5px */
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-
-  /* CONTENT stulpas — scroll konteineris */
+  /* CONTENT stulpas — centre, 334px, yra scroll konteineris */
   .modal-col {
     width: 334px;
     max-width: 334px;
-    margin: clamp(72px, 24vh, 200px) auto 0;
+    margin: clamp(72px, 22vh, 200px) auto 0;
     gap: 48px;
     align-items: stretch;
     flex: 1 1 auto;
@@ -526,25 +526,13 @@
     padding: 0;
   }
 
-  /* Kai atsidaro klaviatūra (kūrėme body.kb-open klasę) – pakelti dar labiau */
-  body.kb-open .modal-col {
-    margin-top: clamp(16px, 10svh, 120px);
-  }
-
-  /* Kai fokusas tekstlauke — dar labiau sumažinam viršutinį tarpą (jei palaikomas :has) */
-  @supports (selector(:has(*))) {
-    .modal-card:has(.input-field:focus) .modal-col {
-      margin-top: 64px;
-    }
-  }
-
   /* H1 */
   .modal-title {
     width: 286px;
     margin: 0 auto;
     text-align: center;
     font-size: 28px;
-    line-height: 1.2;
+    line-height: 1.2; /* 120% */
   }
 
   /* Body grupė */
@@ -555,11 +543,13 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    /* šoniniai latakai visam body */
     padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom, 0) + 96px);
   }
 
-  /* CHIP juosta — horizontalus scroll */
+  /* CHIP juosta (334 plote), horizontalus scroll */
   .suggestions {
+    /* ištraukiam iki kortelės kraštų, bet paliekam vidinius latakus */
     margin-left: calc(-1 * var(--gutter));
     margin-right: calc(-1 * var(--gutter));
     padding-left: var(--gutter);
@@ -569,7 +559,7 @@
 
     display: flex !important;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: flex-start; /* ne center, kad elgtųsi normaliai */
     align-items: center;
     gap: 16px;
 
@@ -590,11 +580,12 @@
     touch-action: pan-x;
   }
 
+  /* drag metu indikatorius (neprivaloma, tik UX) */
   .suggestions.is-dragging {
     cursor: grabbing;
   }
 
-  /* Sticky dokas apačioje */
+  /* Sticky dokas apačioje — latakai po 28px */
   .input-dock {
     position: fixed;
     left: 0;
@@ -631,7 +622,7 @@
     overflow: hidden;
   }
 
-  /* Tekstarea – mobile riba = 136px */
+  /* Tekstarea – mobile riba = 136px (match su JS MAX_H) */
   .input-field {
     min-height: 64px;
     max-height: 136px;
@@ -643,20 +634,43 @@
 
   /* Mic */
   .input-action {
-    margin-left: 0;
+    margin-left: 0px;
   }
-
-  /* Mobile: išjungiame fade maskes */
+  /* Mobile: išjungiame fade maskes (desktop’e paliekam) */
   .input-wrap::before,
   .input-wrap::after {
     display: none !important;
     content: none !important;
   }
 
-  /* Mobile: slepiam footerį */
+  /* Mobile: slepiam footerį, desktop’e rodom */
   .modal-footer {
     display: none !important;
   }
+}
+
+/* mažinam viršutinį tarpą ir tarpus tarp sekcijų */
+body.kb-open .modal-col {
+  margin: clamp(24px, 8vh, 72px) auto 0; /* buvo ~200px; stumia H1 aukštyn */
+  gap: 24px; /* buvo 48px */
+}
+
+/* jei nori – šiek tiek sumažink H1; ištrink jei nereikia */
+body.kb-open .modal-title {
+  font-size: 26px;
+}
+
+/* chip juosta – mažesni vertikalūs tarpeliai ir glaustesnis gap */
+body.kb-open .suggestions {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  gap: 12px; /* buvo 16px */
+}
+
+/* mažiau „oro“ apačioje, kad burbulas pakiltų arčiau chipų */
+body.kb-open .modal-body {
+  padding: 0 var(--gutter) calc(8px + env(safe-area-inset-bottom, 0) + 96px);
+  /* 8px vietoje 20px virš inputo – ramiau susispaudžia */
 }
 
 /* ---------- Reduced motion ---------- */
