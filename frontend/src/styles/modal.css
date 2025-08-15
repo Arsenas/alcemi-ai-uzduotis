@@ -507,11 +507,15 @@
     align-items: initial !important;
   }
 
+  /* MOBILE .modal-card — keyboard-friendly be JS */
   .modal-card {
     position: fixed !important;
     inset: 0 !important;
     width: 100vw !important;
-    height: 100svh !important; /* jokių JS kintamųjų */
+
+    /* Fallback: Safari/senesni – 100svh */
+    height: 100svh !important;
+
     transform: none !important;
     margin: 0 !important;
     border: none;
@@ -521,6 +525,12 @@
     background: #02092e url("/img/background-gradient-mobile.svg") center / cover no-repeat;
   }
 
+  /* Kai palaikoma, naudok 100dvh (Android/Chrome susitraukia su klaviatūra) */
+  @supports (height: 100dvh) {
+    .modal-card {
+      height: 100dvh !important;
+    }
+  }
   html,
   body {
     overflow-x: hidden;
@@ -651,7 +661,7 @@
     min-height: 64px;
     max-height: 136px;
     overflow-y: auto;
-    font-size: 15px;
+    font-size: 16px;
     background: transparent;
     -webkit-overflow-scrolling: touch;
   }
