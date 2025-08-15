@@ -647,30 +647,32 @@
   .modal-footer {
     display: none !important;
   }
-}
 
-/* mažinam viršutinį tarpą ir tarpus tarp sekcijų */
-body.kb-open .modal-col {
-  margin: clamp(24px, 8vh, 72px) auto 0; /* buvo ~200px; stumia H1 aukštyn */
-  gap: 24px; /* buvo 48px */
-}
+  @media (max-width: 480px) {
+    /* mažinam viršutinį tarpą ir tarpus tarp sekcijų */
+    body.kb-open .modal-col {
+      margin: clamp(24px, 8vh, 72px) auto 0; /* buvo ~200px; stumia H1 aukštyn */
+      gap: 24px; /* buvo 48px */
+    }
 
-/* jei nori – šiek tiek sumažink H1; ištrink jei nereikia */
-body.kb-open .modal-title {
-  font-size: 26px;
-}
+    /* jei nori – šiek tiek sumažink H1; ištrink jei nereikia */
+    body.kb-open .modal-title {
+      font-size: 26px;
+    }
 
-/* chip juosta – mažesni vertikalūs tarpeliai ir glaustesnis gap */
-body.kb-open .suggestions {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  gap: 12px; /* buvo 16px */
-}
+    /* chip juosta – mažesni vertikalūs tarpeliai ir glaustesnis gap */
+    body.kb-open .suggestions {
+      padding-top: 2px;
+      padding-bottom: 2px;
+      gap: 12px; /* buvo 16px */
+    }
 
-/* mažiau „oro“ apačioje, kad burbulas pakiltų arčiau chipų */
-body.kb-open .modal-body {
-  padding: 0 var(--gutter) calc(8px + env(safe-area-inset-bottom, 0) + 96px);
-  /* 8px vietoje 20px virš inputo – ramiau susispaudžia */
+    /* mažiau „oro“ apačioje, kad burbulas pakiltų arčiau chipų */
+    body.kb-open .modal-body {
+      padding: 0 var(--gutter) calc(8px + env(safe-area-inset-bottom, 0) + 96px);
+      /* 8px vietoje 20px virš inputo – ramiau susispaudžia */
+    }
+  }
 }
 
 /* ---------- Reduced motion ---------- */
