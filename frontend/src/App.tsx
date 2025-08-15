@@ -104,7 +104,10 @@ export default function App() {
 
       <Modal
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          document.body.classList.remove("kb-open");
+          setOpen(false);
+        }}
         onBack={handleBack}
         title="Hello, what are you looking for today?"
       >
@@ -152,8 +155,8 @@ export default function App() {
                 type="button"
                 className="input-action"
                 aria-label="Voice (coming soon)"
-                aria-disabled="true" // kartu su CSS aukščiau -> inertiškas
-                tabIndex={-1} // nefokusuoja
+                aria-disabled="true"
+                tabIndex={-1}
                 onPointerDown={(e) => e.preventDefault()}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={(e) => e.preventDefault()}

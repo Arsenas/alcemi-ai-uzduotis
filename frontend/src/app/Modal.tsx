@@ -6,22 +6,17 @@ import "../styles/modal.css";
 type Props = {
   open: boolean;
   onClose: () => void;
-  onBack?: () => void; // ← pridėta
+  onBack?: () => void;
   title: string;
   children: ReactNode;
 };
 
-/**
- * Įterpia du galimus laužymo taškus (mobile ir desktop).
- */
 function withResponsiveBreaks(text: string) {
   const m = text.match(/^(.*?\bare you)\s+(looking)\b(.*)$/i);
   if (!m) return text;
-
   const before = m[1];
   const looking = m[2];
   const after = m[3];
-
   return (
     <>
       {before}
@@ -39,21 +34,15 @@ function withResponsiveBreaks(text: string) {
 
 export default function Modal({ open, onClose, onBack, title, children }: Props) {
   const [show, setShow] = useState(open);
-  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     if (open) {
       setShow(true);
-      setClosing(false);
       document.body.style.overflow = "hidden";
     } else if (show) {
-      setClosing(true);
-      const t = setTimeout(() => {
-        setShow(false);
-        setClosing(false);
-        document.body.style.overflow = "";
-      }, 380);
-      return () => clearTimeout(t);
+      // uždarom be animacijos – iškart išmontuojam
+      setShow(false);
+      document.body.style.overflow = "";
     }
   }, [open, show]);
 
@@ -69,12 +58,13 @@ export default function Modal({ open, onClose, onBack, title, children }: Props)
   return (
     <div
       id="ai-modal"
-      className={`modal-root ${open || closing ? "open" : ""} ${closing ? "closing" : ""}`}
+      className="modal-root open" /* tik 'open' – kad suveiktų atidarymo animacija */
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
+      onClick={onClose}
     >
-      <div className="backdrop" onClick={onClose} />
+      <div className="backdrop" />
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-ctr">
           <div className="modal-head" role="toolbar" aria-label="AI modal navigation">
@@ -82,11 +72,7 @@ export default function Modal({ open, onClose, onBack, title, children }: Props)
               <img src="/img/logo-mobile.svg" alt="Alcemi" />
             </button>
 
-            <button
-              className="icon-btn head-back"
-              aria-label="Back"
-              onClick={onBack ?? onClose} // ← back handler
-            >
+            <button className="icon-btn head-back" aria-label="Back" onClick={onBack ?? onClose}>
               <img src="/img/back.svg" alt="" aria-hidden="true" />
             </button>
 
