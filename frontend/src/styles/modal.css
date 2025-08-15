@@ -644,7 +644,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Mic – paliekam kaip yra (absoliutus tavo variante) arba margin-left:0 jei grid */
+  /* Mic – paliekam kaip yra (grid variante) */
   .input-action {
     margin-left: 0;
   }
