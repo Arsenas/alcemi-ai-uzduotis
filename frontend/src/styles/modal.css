@@ -61,7 +61,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   /* Siaurėjantis plotis tarp 720px ir 1330px, su šonų „edge“ tarpu */
-  width: clamp(720px, calc(100vw - 2 * var(--edge)), var(--modal-w-desktop));
+  width: clamp(520px, calc(100vw - 2 * var(--edge)), var(--modal-w-desktop));
   height: var(--modal-h-desktop);
 
   color: var(--text-on-dark);
@@ -151,27 +151,37 @@
 .head-spacer {
   flex: 1 1 auto;
 }
-
-@media (min-width: 768px) {
-  .modal-head .head-logo-mobile {
-    display: none;
-  }
-  .head-back {
-    display: inline-grid;
-  }
-}
-@media (max-width: 767.98px) {
+/* Desktop (>480px) – bazinė būsena */
+@media (min-width: 481px) {
   .modal-head {
-    padding: 16px 20px;
-  } /* mobile nav padding */
-  .head-logo-mobile {
-    display: inline-block;
-  }
+    padding: 18px 24px;
+  } /* tavo desktop padding */
+
+  /* Rodyti desktop elementus */
   .head-back {
-    display: none;
+    display: inline-grid !important;
+  }
+
+  /* Slėpti tik mobile logo */
+  .modal-head .head-logo-mobile {
+    display: none !important;
   }
 }
 
+/* Mobile (≤480px) – tik čia rodom mobile nav */
+@media (max-width: 480px) {
+  .modal-head {
+    padding: 16px var(--gutter);
+  } /* kaip tavo mobile */
+
+  /* Rodyti mobile logo, slėpti „back“ */
+  .head-logo-mobile {
+    display: inline-block !important;
+  }
+  .head-back {
+    display: none !important;
+  }
+}
 /* ---------- Title ---------- */
 .modal-title {
   margin: 0;
@@ -222,7 +232,7 @@
   margin: 0 auto;
 }
 
-/* CHIP — bazė (globaliai, ne @media) */
+/* CHIP — bazė */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -242,35 +252,38 @@
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
+
+/* HOVER */
 .chip:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: #d9d9d9;
 }
 
-/* RING: klaviatūros focus */
+/* ON CLICK — kol laikai paspaudęs (be ring’o) */
+.chip:active {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: transparent;
+  box-shadow: none; /* <- ring'o čia NEBŪNA */
+  transform: translateY(0);
+}
+
+/* FOCUSED — po atleidimo ir klaviatūrai */
 .chip:focus {
   outline: none;
 }
-.chip:focus-visible:not(:active) {
+
+/* klaviatūros fokusas */
+.chip:focus-visible {
   box-shadow: var(--chip-ring);
   border-color: transparent;
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* RING: spaudžiamas (mouse/touch down) */
-.chip:active {
+/* pelės/touch fokusas po atleidimo (NE :active) */
+.chip:focus:not(:active) {
   box-shadow: var(--chip-ring);
   border-color: transparent;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(0);
-}
-
-/* RING: „selected“ (lieka po paspaudimo) */
-.chip[aria-pressed="true"],
-.chip.is-active {
-  box-shadow: var(--chip-ring);
-  border-color: transparent;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* ---------- Input bubble (desktop) ---------- */

@@ -1,22 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = { items: string[]; onPick: (val: string) => void };
 
 export default function Chips({ items, onPick }: Props) {
-  const [selected, setSelected] = useState<string | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  // drag / scroll kontrolė
+  // drag / scroll
   const dragging = useRef(false);
   const startX = useRef(0);
   const startScroll = useRef(0);
 
-  // Už ribų paspaudus – nuimam `selected` ir fokusą nuo chip
+  // Paspaudus už ribų – numetam focus (grįžta į default)
   useEffect(() => {
     const onDown = (e: PointerEvent) => {
       const w = wrapRef.current;
       if (w && !w.contains(e.target as Node)) {
-        setSelected(null);
         const ae = document.activeElement as HTMLElement | null;
         if (ae?.classList.contains("chip")) ae.blur();
       }
@@ -30,21 +28,16 @@ export default function Chips({ items, onPick }: Props) {
       ref={wrapRef}
       className="suggestions"
       role="list"
-      tabIndex={0} // kad gautų fokusą ir veiktų rodyklės
+      tabIndex={0}
       onKeyDown={(e) => {
         const el = wrapRef.current;
         if (!el) return;
         if (e.key === "ArrowRight") {
           el.scrollBy({ left: 96, behavior: "smooth" });
           e.preventDefault();
-        } else if (e.key === "ArrowLeft") {
+        }
+        if (e.key === "ArrowLeft") {
           el.scrollBy({ left: -96, behavior: "smooth" });
-          e.preventDefault();
-        } else if (e.key === "Home") {
-          el.scrollTo({ left: 0, behavior: "smooth" });
-          e.preventDefault();
-        } else if (e.key === "End") {
-          el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
           e.preventDefault();
         }
       }}
@@ -54,7 +47,6 @@ export default function Chips({ items, onPick }: Props) {
         dragging.current = false;
         startX.current = e.clientX;
         startScroll.current = el.scrollLeft;
-        // laikom pointer capture, kad drag nenutrūktų palikus elementą
         (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
         el.classList.add("is-dragging");
       }}
@@ -64,18 +56,15 @@ export default function Chips({ items, onPick }: Props) {
         const dx = e.clientX - startX.current;
         if (Math.abs(dx) > 3) dragging.current = true;
         el.scrollLeft = startScroll.current - dx;
-        e.preventDefault(); // svarbu touch’uose
+        e.preventDefault();
       }}
       onPointerUp={(e) => {
-        const el = wrapRef.current;
-        el?.classList.remove("is-dragging");
+        wrapRef.current?.classList.remove("is-dragging");
         (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
-        // mažas delay, kad click handleris matytų galutinę dragging būseną
         requestAnimationFrame(() => (dragging.current = false));
       }}
       onPointerCancel={(e) => {
-        const el = wrapRef.current;
-        el?.classList.remove("is-dragging");
+        wrapRef.current?.classList.remove("is-dragging");
         (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
         dragging.current = false;
       }}
@@ -86,12 +75,11 @@ export default function Chips({ items, onPick }: Props) {
           className="chip"
           role="listitem"
           type="button"
-          aria-pressed={selected === label}
           onClick={(e) => {
-            if (dragging.current) return; // jei buvo drag, kliką ignoruojam
-            setSelected(label); // pažymim
+            if (dragging.current) return; // ignoruojam jei buvo drag
             onPick(label);
-            (e.currentTarget as HTMLButtonElement).blur(); // focus nuimam, ring lieka per aria-pressed
+            // Paliekam FOCUS (rodysis focused state)
+            e.currentTarget.focus({ preventScroll: true });
           }}
         >
           {label}
