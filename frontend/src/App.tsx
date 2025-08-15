@@ -19,7 +19,7 @@ export default function App() {
   const [answer, setAnswer] = useState("");
 
   const taRef = useRef<HTMLTextAreaElement>(null);
-  const MAX_H = 136; // turi sutapti su CSS .input-wrap max-height
+  const MAX_H = 136;
 
   function updateFade(el: HTMLTextAreaElement) {
     const wrap = el.closest(".input-wrap") as HTMLElement | null;
@@ -41,7 +41,6 @@ export default function App() {
     el.style.overflowY = el.scrollHeight > next ? "auto" : "hidden";
   }
 
-  // focus + autosize kai peršokam į "typing"
   useEffect(() => {
     if (!open) return;
     if (view !== "typing") return;
@@ -67,7 +66,7 @@ export default function App() {
     if (!query.trim()) return;
     setTimeout(() => {
       setAnswer("Lorem ipsum response bubble…");
-      setView("answer");
+      setView("answer"); // <- perėjimas į atsakymo režimą
     }, 400);
   }
 
@@ -104,19 +103,19 @@ export default function App() {
 
       <Modal
         open={open}
-        onClose={() => {
-          document.body.classList.remove("kb-open");
-          setOpen(false);
-        }}
+        onClose={() => setOpen(false)}
         onBack={handleBack}
         title="Hello, what are you looking for today?"
+        mode={view === "answer" ? "answer" : "default"} // <- pasakome modalui, kad esame „answer“ režime
       >
-        {/* Chips */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <Chips items={CHIP_ITEMS} onPick={pickChip} />
-        </div>
+        {/* CHIPS rodom tik ne „answer“ režime */}
+        {view !== "answer" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <Chips items={CHIP_ITEMS} onPick={pickChip} />
+          </div>
+        )}
 
-        {/* DOCK ties modal apačia (sticky mobilėje, absolute desktop) */}
+        {/* INPUT arba ATS. BURBULAS */}
         {view !== "answer" ? (
           <div className="input-dock">
             <form
@@ -142,15 +141,11 @@ export default function App() {
                     submit();
                   }
                 }}
-                onFocus={() => {
-                  document.body.classList.add("kb-open");
-                }}
-                onBlur={() => {
-                  document.body.classList.remove("kb-open");
-                }}
+                onFocus={() => document.body.classList.add("kb-open")}
+                onBlur={() => document.body.classList.remove("kb-open")}
                 aria-label="Message"
               />
-              {/* MIC – neaktyvus, ne submit */}
+              {/* MIC – neaktyvus */}
               <button
                 type="button"
                 className="input-action"
@@ -166,17 +161,8 @@ export default function App() {
             </form>
           </div>
         ) : (
-          <div
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              color: "#E7E9F2",
-              borderRadius: 14,
-              padding: "12px 14px",
-              border: "1px solid rgba(255,255,255,0.18)",
-              maxWidth: "90%",
-            }}
-          >
-            {answer}
+          <div className="answer-center">
+            <div className="answer-bubble">{answer}</div>
           </div>
         )}
       </Modal>

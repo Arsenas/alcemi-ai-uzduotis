@@ -9,6 +9,7 @@ type Props = {
   onBack?: () => void;
   title: string;
   children: ReactNode;
+  mode?: "default" | "answer"; // <- nauja
 };
 
 function withResponsiveBreaks(text: string) {
@@ -32,7 +33,7 @@ function withResponsiveBreaks(text: string) {
   );
 }
 
-export default function Modal({ open, onClose, onBack, title, children }: Props) {
+export default function Modal({ open, onClose, onBack, title, children, mode = "default" }: Props) {
   const [show, setShow] = useState(open);
 
   useEffect(() => {
@@ -40,7 +41,6 @@ export default function Modal({ open, onClose, onBack, title, children }: Props)
       setShow(true);
       document.body.style.overflow = "hidden";
     } else if (show) {
-      // uždarom be animacijos – iškart išmontuojam
       setShow(false);
       document.body.style.overflow = "";
     }
@@ -58,7 +58,7 @@ export default function Modal({ open, onClose, onBack, title, children }: Props)
   return (
     <div
       id="ai-modal"
-      className="modal-root open" /* tik 'open' – kad suveiktų atidarymo animacija */
+      className="modal-root open"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
@@ -83,10 +83,12 @@ export default function Modal({ open, onClose, onBack, title, children }: Props)
             </button>
           </div>
 
-          <div className="modal-col">
-            <h1 id="modal-title" className="modal-title">
-              {withResponsiveBreaks(title)}
-            </h1>
+          <div className={`modal-col ${mode === "answer" ? "is-answer" : ""}`}>
+            {mode !== "answer" && (
+              <h1 id="modal-title" className="modal-title">
+                {withResponsiveBreaks(title)}
+              </h1>
+            )}
             <div className="modal-body">{children}</div>
           </div>
 

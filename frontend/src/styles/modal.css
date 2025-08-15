@@ -443,6 +443,42 @@
   pointer-events: auto;
 }
 
+/* ------- ANSWER mode: centras ------- */
+.modal-col.is-answer {
+  /* jokio didelio viršutinio tarpo */
+  margin: 0 auto;
+  gap: 0;
+  flex: 1 1 auto;
+
+  /* užtikrinam, kad vidus būtų centruotas */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertikaliai */
+  align-items: center; /* horizontaliai */
+}
+
+.modal-col.is-answer .modal-body {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0; /* desktop – be papildomų tarpų */
+}
+
+.answer-center {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.answer-bubble {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e7e9f2;
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  max-width: min(560px, 90%);
+}
+
 /* ---------- Footer ---------- */
 .modal-footer {
   position: absolute;
@@ -523,6 +559,14 @@
   body.kb-open .modal-col {
     margin: clamp(28px, 8dvh, 80px) auto 0 !important;
     gap: 16px !important;
+  }
+
+  .modal-col.is-answer {
+    width: 100%;
+    max-width: none;
+  }
+  .modal-col.is-answer .modal-body {
+    padding: 0 var(--gutter); /* šoniniai latakai mobilėje */
   }
 
   /* H1 */
