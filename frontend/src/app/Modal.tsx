@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../styles/modal-anim.css";
 import "../styles/modal.css";
 
@@ -9,7 +9,7 @@ type Props = {
   onBack?: () => void;
   title: string;
   children: ReactNode;
-  mode?: "default" | "answer"; // <- nauja
+  mode?: "default" | "answer";
 };
 
 function withResponsiveBreaks(text: string) {
@@ -35,16 +35,65 @@ function withResponsiveBreaks(text: string) {
 
 export default function Modal({ open, onClose, onBack, title, children, mode = "default" }: Props) {
   const [show, setShow] = useState(open);
+  const lockedScrollY = useRef(0);
 
+  // 1) Body scroll lock (iOS-proof)
   useEffect(() => {
+    const body = document.body;
     if (open) {
       setShow(true);
-      document.body.style.overflow = "hidden";
+
+      // užlockinam puslapį po modalu
+      lockedScrollY.current = window.scrollY;
+      body.style.position = "fixed";
+      body.style.top = `-${lockedScrollY.current}px`;
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.width = "100%";
+      body.style.overflow = "hidden";
+      // mažina scroll chain tikimybę
+      body.style.overscrollBehavior = "none";
+      body.style.touchAction = "none";
     } else if (show) {
+      // atlaisvinam
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      body.style.overflow = "";
+      body.style.overscrollBehavior = "";
+      body.style.touchAction = "";
+      window.scrollTo(0, lockedScrollY.current);
       setShow(false);
-      document.body.style.overflow = "";
     }
   }, [open, show]);
+
+  // 2) VisualViewport → --vvh + body.kb-open
+  useEffect(() => {
+    const vv = (window as any).visualViewport as VisualViewport | undefined;
+    const baseInnerH = window.innerHeight; // startinė „pilno“ ekrano reikšmė
+
+    const updateVVH = () => {
+      const h = vv ? vv.height : window.innerHeight;
+      document.documentElement.style.setProperty("--vvh", `${Math.round(h)}px`);
+
+      // jei height reikšmingai mažesnis už bazinį → laikom, kad atsidarė klaviatūra
+      const kbOpen = h < baseInnerH - 80;
+      document.body.classList.toggle("kb-open", kbOpen);
+    };
+
+    updateVVH();
+    vv?.addEventListener("resize", updateVVH);
+    vv?.addEventListener("scroll", updateVVH);
+    window.addEventListener("orientationchange", updateVVH);
+
+    return () => {
+      vv?.removeEventListener("resize", updateVVH);
+      vv?.removeEventListener("scroll", updateVVH);
+      window.removeEventListener("orientationchange", updateVVH);
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;

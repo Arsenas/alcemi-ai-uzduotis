@@ -497,7 +497,6 @@
 }
 
 /* ========= MOBILE (≤480px) – Figma match (390w, gutter 28, content 334) ========= */
-/* ========= MOBILE (≤480px) – Figma match (390w, gutter 28, content 334) ========= */
 @media (max-width: 480px) {
   :root {
     --gutter: 28px;
@@ -574,6 +573,7 @@
   }
   .modal-col.is-answer .modal-body {
     padding: 0 var(--gutter);
+    padding-bottom: 200px;
   }
 
   /* H1 */
