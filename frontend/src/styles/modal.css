@@ -188,7 +188,7 @@
   text-align: center;
   font-family: "Satoshi", sans-serif;
   font-weight: 400;
-  font-size: clamp(24px, 2.2vw, 32px);
+  font-size: 32px;
   line-height: 1.2; /* 120% */
   letter-spacing: 0;
   color: #fcfcfc;
