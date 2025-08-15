@@ -480,7 +480,7 @@
     position: fixed !important;
     inset: 0 !important;
     width: 100vw !important;
-    height: 100dvh !important;
+    height: 100svh !important; /* fonas stabilus */
     transform: none !important;
     margin: 0 !important;
     border: none;
@@ -502,28 +502,38 @@
     padding-bottom: 0;
   }
 
-  /* NAV — Fixed 334×38, center; kairė dešinė po 28px */
-  /* NAV – vienodi top/side tarpai (kaip Figma) */
+  /* NAV */
   .modal-head {
     width: 100%;
     margin: 0;
     height: auto;
-    padding: 16px var(--gutter); /* buvo 5px 5px */
+    padding: 16px var(--gutter);
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  /* CONTENT stulpas — centre, 334px, yra scroll konteineris */
+
+  /* CONTENT stulpas — scroll konteineris */
   .modal-col {
+    /* top tarpas: normaliai didesnis, su kb-open – mažesnis */
+    --col-top: clamp(72px, 22vh, 200px);
+    --col-gap: 48px;
+
     width: 334px;
     max-width: 334px;
-    margin: clamp(72px, 22vh, 200px) auto 0;
-    gap: 48px;
+    margin: var(--col-top) auto 0;
+    gap: var(--col-gap);
     align-items: stretch;
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0;
+  }
+
+  /* kai klaviatūra atidaryta (kintamuosius perrašom) */
+  body.kb-open .modal-col {
+    --col-top: clamp(28px, 8vh, 80px);
+    --col-gap: 16px;
   }
 
   /* H1 */
@@ -532,10 +542,10 @@
     margin: 0 auto;
     text-align: center;
     font-size: 28px;
-    line-height: 1.2; /* 120% */
+    line-height: 1.2;
   }
 
-  /* Body grupė */
+  /* Body grupė (apačios padding sumažinam su kb-open) */
   .modal-body {
     width: 100%;
     max-width: none;
@@ -543,13 +553,14 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    /* šoniniai latakai visam body */
-    padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom, 0) + 96px);
+    padding: 0 var(--gutter) var(--body-pad, calc(20px + env(safe-area-inset-bottom, 0) + 96px));
+  }
+  body.kb-open .modal-body {
+    --body-pad: calc(8px + env(safe-area-inset-bottom, 0) + 72px);
   }
 
-  /* CHIP juosta (334 plote), horizontalus scroll */
+  /* CHIP juosta — horizontalus scroll, iki kraštų */
   .suggestions {
-    /* ištraukiam iki kortelės kraštų, bet paliekam vidinius latakus */
     margin-left: calc(-1 * var(--gutter));
     margin-right: calc(-1 * var(--gutter));
     padding-left: var(--gutter);
@@ -559,7 +570,7 @@
 
     display: flex !important;
     flex-wrap: nowrap;
-    justify-content: flex-start; /* ne center, kad elgtųsi normaliai */
+    justify-content: flex-start;
     align-items: center;
     gap: 16px;
 
@@ -573,19 +584,16 @@
   .suggestions::-webkit-scrollbar {
     display: none;
   }
-
   .suggestions .chip {
     flex: 0 0 auto;
     white-space: nowrap;
     touch-action: pan-x;
   }
-
-  /* drag metu indikatorius (neprivaloma, tik UX) */
   .suggestions.is-dragging {
     cursor: grabbing;
   }
 
-  /* Sticky dokas apačioje — latakai po 28px */
+  /* Sticky input apačioje */
   .input-dock {
     position: fixed;
     left: 0;
@@ -599,11 +607,15 @@
     padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom, 0));
     background: none;
   }
+  body.kb-open .input-dock {
+    /* šiek tiek mažiau, kai kb atidaryta */
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0));
+  }
   .input-dock .input-wrap {
     pointer-events: auto;
   }
 
-  /* Įvedimo „burbulas“ — 334 plotyje, 96–168 aukštis */
+  /* Input bubble */
   .input-wrap {
     width: 334px;
     min-height: 96px;
@@ -622,7 +634,7 @@
     overflow: hidden;
   }
 
-  /* Tekstarea – mobile riba = 136px (match su JS MAX_H) */
+  /* Tekstarea */
   .input-field {
     min-height: 64px;
     max-height: 136px;
@@ -632,46 +644,21 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Mic */
+  /* Mic – paliekam kaip yra (absoliutus tavo variante) arba margin-left:0 jei grid */
   .input-action {
-    margin-left: 0px;
+    margin-left: 0;
   }
-  /* Mobile: išjungiame fade maskes (desktop’e paliekam) */
+
+  /* Fades išjungti mobilėje */
   .input-wrap::before,
   .input-wrap::after {
     display: none !important;
     content: none !important;
   }
 
-  /* Mobile: slepiam footerį, desktop’e rodom */
+  /* footer pasleptas */
   .modal-footer {
     display: none !important;
-  }
-
-  @media (max-width: 480px) {
-    /* mažinam viršutinį tarpą ir tarpus tarp sekcijų */
-    body.kb-open .modal-col {
-      margin: clamp(24px, 8vh, 72px) auto 0; /* buvo ~200px; stumia H1 aukštyn */
-      gap: 24px; /* buvo 48px */
-    }
-
-    /* jei nori – šiek tiek sumažink H1; ištrink jei nereikia */
-    body.kb-open .modal-title {
-      font-size: 26px;
-    }
-
-    /* chip juosta – mažesni vertikalūs tarpeliai ir glaustesnis gap */
-    body.kb-open .suggestions {
-      padding-top: 2px;
-      padding-bottom: 2px;
-      gap: 12px; /* buvo 16px */
-    }
-
-    /* mažiau „oro“ apačioje, kad burbulas pakiltų arčiau chipų */
-    body.kb-open .modal-body {
-      padding: 0 var(--gutter) calc(8px + env(safe-area-inset-bottom, 0) + 96px);
-      /* 8px vietoje 20px virš inputo – ramiau susispaudžia */
-    }
   }
 }
 
