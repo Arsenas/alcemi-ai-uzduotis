@@ -460,11 +460,6 @@
   display: block;
 }
 
-/* ---------- Desktop-specific ---------- */
-@media (min-width: 1024px) {
-  /* base above = desktop */
-}
-
 /* ========= MOBILE (≤480px) – Figma match (390w, gutter 28, content 334) ========= */
 @media (max-width: 480px) {
   :root {
@@ -480,7 +475,7 @@
     position: fixed !important;
     inset: 0 !important;
     width: 100vw !important;
-    height: 100svh !important; /* fonas stabilus */
+    height: 100svh !important; /* stabilus fonas su klaviatūra */
     transform: none !important;
     margin: 0 !important;
     border: none;
@@ -515,25 +510,19 @@
 
   /* CONTENT stulpas — scroll konteineris */
   .modal-col {
-    /* top tarpas: normaliai didesnis, su kb-open – mažesnis */
-    --col-top: clamp(72px, 22vh, 200px);
-    --col-gap: 48px;
-
     width: 334px;
     max-width: 334px;
-    margin: var(--col-top) auto 0;
-    gap: var(--col-gap);
+    margin: clamp(72px, 22dvh, 200px) auto 0 !important; /* susispaudžia su klaviatūra */
+    gap: 48px;
     align-items: stretch;
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0;
   }
-
-  /* kai klaviatūra atidaryta (kintamuosius perrašom) */
   body.kb-open .modal-col {
-    --col-top: clamp(28px, 8vh, 80px);
-    --col-gap: 16px;
+    margin: clamp(28px, 8dvh, 80px) auto 0 !important;
+    gap: 16px !important;
   }
 
   /* H1 */
@@ -545,7 +534,7 @@
     line-height: 1.2;
   }
 
-  /* Body grupė (apačios padding sumažinam su kb-open) */
+  /* Body grupė */
   .modal-body {
     width: 100%;
     max-width: none;
@@ -553,27 +542,22 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 0 var(--gutter) var(--body-pad, calc(20px + env(safe-area-inset-bottom, 0) + 96px));
+    padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom, 0) + 96px);
   }
   body.kb-open .modal-body {
-    --body-pad: calc(8px + env(safe-area-inset-bottom, 0) + 72px);
+    padding: 0 var(--gutter) calc(8px + env(safe-area-inset-bottom, 0) + 72px) !important;
   }
 
-  /* CHIP juosta — horizontalus scroll, iki kraštų */
+  /* CHIP juosta — horizontalus scroll iki kraštų */
   .suggestions {
     margin-left: calc(-1 * var(--gutter));
     margin-right: calc(-1 * var(--gutter));
-    padding-left: var(--gutter);
-    padding-right: var(--gutter);
-    padding-top: 6px;
-    padding-bottom: 6px;
-
+    padding: 6px var(--gutter);
     display: flex !important;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
     gap: 16px;
-
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
@@ -608,8 +592,7 @@
     background: none;
   }
   body.kb-open .input-dock {
-    /* šiek tiek mažiau, kai kb atidaryta */
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0)) !important;
   }
   .input-dock .input-wrap {
     pointer-events: auto;
@@ -644,7 +627,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Mic – paliekam kaip yra (grid variante) */
+  /* Mic (grid variante) */
   .input-action {
     margin-left: 0;
   }
