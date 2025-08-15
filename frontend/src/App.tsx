@@ -21,37 +21,25 @@ export default function App() {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const MAX_H = 136;
 
-  /** Keyboard-aware viewport sizing: sets --vvh and --kb-height, toggles body.kb-open */
+  /** Drive layout from the visual viewport (keyboard-aware). */
   useEffect(() => {
-    const vv: VisualViewport | undefined = (window as any).visualViewport;
-    const root = document.documentElement;
+    const vv = (window as any).visualViewport as VisualViewport | undefined;
+    if (!vv) return; // fallback: CSS uses 100svh
 
-    const setVars = () => {
-      const layoutH = window.innerHeight; // pilnas layout viewport aukštis
-      const visibleH = Math.round(vv?.height ?? layoutH); // matomas (sumažėja su KB)
-      const offsetTop = Math.round(vv?.offsetTop ?? 0);
-
-      // matomo viewport aukštis (naudojamas .modal-card height)
-      root.style.setProperty("--vvh", `${visibleH}px`);
-
-      // apytikslis klaviatūros aukštis
-      const kb = Math.max(0, layoutH - visibleH - offsetTop);
-      root.style.setProperty("--kb-height", `${kb}px`);
-
-      // padedam CSS susitraukimams
-      const kbOpen = kb > 80; // nedidelis slenkstis
+    const apply = () => {
+      const full = window.innerHeight;
+      const h = vv.height;
+      document.documentElement.style.setProperty("--vvh", `${h}px`);
+      const kbOpen = full - h > 120; // heuristic: keyboard visible
       document.body.classList.toggle("kb-open", kbOpen);
     };
 
-    setVars();
-    vv?.addEventListener("resize", setVars);
-    vv?.addEventListener("scroll", setVars);
-    window.addEventListener("resize", setVars);
-
+    apply();
+    vv.addEventListener("resize", apply);
+    vv.addEventListener("scroll", apply);
     return () => {
-      vv?.removeEventListener("resize", setVars);
-      vv?.removeEventListener("scroll", setVars);
-      window.removeEventListener("resize", setVars);
+      vv.removeEventListener("resize", apply);
+      vv.removeEventListener("scroll", apply);
     };
   }, []);
 
@@ -99,7 +87,7 @@ export default function App() {
   function submit() {
     if (!query.trim()) return;
     setTimeout(() => {
-      setAnswer("AI answer will be displayed in this bubble");
+      setAnswer("AI answer will be displayed in this bubble…");
       setView("answer");
     }, 400);
   }
