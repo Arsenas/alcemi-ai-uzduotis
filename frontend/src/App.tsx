@@ -21,28 +21,6 @@ export default function App() {
   const taRef = useRef<HTMLTextAreaElement>(null);
   const MAX_H = 136;
 
-  /** Drive layout from the visual viewport (keyboard-aware). */
-  useEffect(() => {
-    const vv = (window as any).visualViewport as VisualViewport | undefined;
-    if (!vv) return; // fallback: CSS uses 100svh
-
-    const apply = () => {
-      const full = window.innerHeight;
-      const h = vv.height;
-      document.documentElement.style.setProperty("--vvh", `${h}px`);
-      const kbOpen = full - h > 120; // heuristic: keyboard visible
-      document.body.classList.toggle("kb-open", kbOpen);
-    };
-
-    apply();
-    vv.addEventListener("resize", apply);
-    vv.addEventListener("scroll", apply);
-    return () => {
-      vv.removeEventListener("resize", apply);
-      vv.removeEventListener("scroll", apply);
-    };
-  }, []);
-
   function updateFade(el: HTMLTextAreaElement) {
     const wrap = el.closest(".input-wrap") as HTMLElement | null;
     if (!wrap) return;
@@ -63,7 +41,6 @@ export default function App() {
     el.style.overflowY = el.scrollHeight > next ? "auto" : "hidden";
   }
 
-  // focus + autosize kai peršokam į "typing"
   useEffect(() => {
     if (!open || view !== "typing") return;
     const el = taRef.current;
@@ -130,14 +107,12 @@ export default function App() {
         title="Hello, what are you looking for today?"
         mode={view === "answer" ? "answer" : "default"}
       >
-        {/* Chips – nerodom „answer“ režime */}
         {view !== "answer" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Chips items={CHIP_ITEMS} onPick={pickChip} />
           </div>
         )}
 
-        {/* Input arba atsakymo burbulas */}
         {view !== "answer" ? (
           <div className="input-dock">
             <form
@@ -165,7 +140,6 @@ export default function App() {
                 }}
                 aria-label="Message"
               />
-              {/* MIC – neaktyvus */}
               <button
                 type="button"
                 className="input-action"

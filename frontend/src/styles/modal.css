@@ -511,8 +511,7 @@
     position: fixed !important;
     inset: 0 !important;
     width: 100vw !important;
-    /* aukštis prisitaiko prie likusio vizualaus viewport'o (kai atsiranda klaviatūra) */
-    height: var(--vvh, 100svh) !important;
+    height: 100svh !important; /* jokių JS kintamųjų */
     transform: none !important;
     margin: 0 !important;
     border: none;
@@ -534,7 +533,6 @@
     padding-bottom: 0;
   }
 
-  /* NAV */
   .modal-head {
     width: 100%;
     margin: 0;
@@ -545,38 +543,26 @@
     justify-content: space-between;
   }
 
-  /* CONTENT stulpas — be vertikalaus scroll (scrollina tik chips juosta) */
+  /* leidžiam natūralų scroll'ą kolonoje (kaip anksčiau) */
   .modal-col {
-    /* kintamieji tarpams */
-    --col-top: clamp(72px, 22dvh, 200px);
-    --col-gap: 48px;
-
     width: 100% !important;
     max-width: none !important;
-    margin: var(--col-top) auto 0 !important;
-    gap: var(--col-gap);
+    margin: clamp(72px, 22dvh, 200px) auto 0 !important;
+    gap: 48px;
     align-items: stretch;
     flex: 1 1 auto;
-    overflow: hidden; /* ← nebescrollina H1/kolonos */
+    overflow: visible; /* ← grąžinta */
     padding: 0;
   }
-  body.kb-open .modal-col {
-    /* kai atsidaro klaviatūra – mažesni tarpai */
-    --col-top: clamp(24px, 8dvh, 72px);
-    --col-gap: 16px;
-  }
 
-  /* „answer“ režime paliekam centravimą ir šoninius latakus */
   .modal-col.is-answer {
     width: 100%;
     max-width: none;
   }
   .modal-col.is-answer .modal-body {
     padding: 0 var(--gutter);
-    padding-bottom: 200px;
   }
 
-  /* H1 */
   .modal-title {
     width: 286px;
     margin: 0 auto;
@@ -585,7 +571,6 @@
     line-height: 1.2;
   }
 
-  /* Body grupė (apačia mažėja su kb-open) */
   .modal-body {
     width: 100%;
     max-width: none;
@@ -594,13 +579,10 @@
     flex-direction: column;
     gap: 20px;
     overflow: visible;
-    padding: 0 var(--gutter) var(--body-pad, calc(20px + env(safe-area-inset-bottom, 0) + 96px));
-  }
-  body.kb-open .modal-body {
-    --body-pad: calc(8px + env(safe-area-inset-bottom, 0) + 56px) !important;
+    /* vietos sticky inputui */
+    padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom, 0) + 96px);
   }
 
-  /* CHIP juosta — per visą plotį iki kraštų, tik horizontalus scroll */
   .suggestions {
     margin-left: calc(-1 * var(--gutter));
     margin-right: calc(-1 * var(--gutter));
@@ -610,7 +592,6 @@
     justify-content: flex-start;
     align-items: center;
     gap: 16px;
-
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
@@ -630,12 +611,12 @@
     cursor: grabbing;
   }
 
-  /* Sticky input apačioje */
+  /* sticky input apačioje – VISADA prie bottom */
   .input-dock {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 0; /* ← jokių calc su kb */
     z-index: 3;
     margin-top: 0;
     display: flex;
@@ -644,14 +625,10 @@
     padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom, 0));
     background: none;
   }
-  body.kb-open .input-dock {
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0)) !important;
-  }
   .input-dock .input-wrap {
     pointer-events: auto;
   }
 
-  /* Input bubble */
   .input-wrap {
     width: 334px;
     min-height: 96px;
@@ -670,7 +647,6 @@
     overflow: hidden;
   }
 
-  /* Tekstarea */
   .input-field {
     min-height: 64px;
     max-height: 136px;
@@ -680,19 +656,20 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Mic (grid variante) */
   .input-action {
     margin-left: 0;
   }
 
-  /* Fades išjungti mobilėje */
   .input-wrap::before,
   .input-wrap::after {
     display: none !important;
     content: none !important;
   }
 
-  /* footer paslėptas */
+  .answer-bubble {
+    margin-bottom: 200px;
+  }
+
   .modal-footer {
     display: none !important;
   }
