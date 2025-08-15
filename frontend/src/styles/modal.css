@@ -17,6 +17,10 @@
   --border-soft: rgba(255, 255, 255, 0.45);
 
   --chip-ring: 0 0 0 2px #ffffff, 0 0 0 6px #3654ff;
+
+  --edge-min: 24px;
+  --edge-max: 64px;
+  --edge: clamp(var(--edge-min), 6vw, var(--edge-max));
 }
 
 /* ---------- Root & Backdrop ---------- */
@@ -55,34 +59,20 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); /* desktop centering */
-  width: var(--modal-w);
-  height: var(--modal-h);
+  transform: translate(-50%, -50%);
+  /* Siaurėjantis plotis tarp 720px ir 1330px, su šonų „edge“ tarpu */
+  width: clamp(720px, calc(100vw - 2 * var(--edge)), var(--modal-w-desktop));
+  height: var(--modal-h-desktop);
+
   color: var(--text-on-dark);
-  border-radius: 26px;
+  border-radius: 28px;
   border: 1px solid var(--border-soft);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 30px 80px rgba(0, 0, 0, 0.45);
   display: flex;
   overflow: hidden;
-  background-color: #02092e;
-  background-image: url("/img/background-gradient-mobile.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-}
 
-/* Desktop override */
-@media (min-width: 1024px) {
-  .modal-card {
-    width: var(--modal-w-desktop);
-    height: var(--modal-h-desktop);
-    border-radius: 28px;
-    background-color: #02092e;
-    background-image: url("/img/background-gradient-desktop.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-  }
+  /* Desktop fonas čia (mobile foną paliekam mobiliajame @media) */
+  background: #02092e url("/img/background-gradient-desktop.svg") center / cover no-repeat;
 }
 
 /* ---------- Inner container ---------- */
@@ -99,13 +89,16 @@
 
 /* Central column (wraps H1 + chips + children) */
 .modal-col {
-  width: 480px; /* Figma fixed 480 (desktop) */
-  max-width: calc(100vw - 64px);
-  margin: 140px auto 0; /* content sits below nav */
+  width: 100%;
+  max-width: 480px; /* Figma */
+  margin: 140px auto 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 48px; /* H1 ↕ chips spacing */
+  gap: 48px;
+
+  /* svarbu: neleisk nukirpti horizontalių vidinių scrollerių */
+  overflow: visible;
 }
 
 /* ---------- Nav (icons + optional mobile logo) ---------- */
