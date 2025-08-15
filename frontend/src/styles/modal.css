@@ -139,6 +139,10 @@
 
 .head-logo-mobile {
   display: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
 }
 .head-logo-mobile img {
   height: 24px;
@@ -312,7 +316,7 @@
   position: absolute;
   left: 16px;
   right: 16px;
-  top: 16px;
+  top: 14px;
   height: 40px;
   pointer-events: none;
   opacity: 0;
@@ -387,7 +391,7 @@
   width: 32px;
   height: 32px;
   padding: 0;
-  margin-left: 10px;
+  margin-left: 0; /* nebereikia, nes absoliutus */
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -395,12 +399,26 @@
   background: linear-gradient(180deg, #0a186a, #142fd0);
   box-shadow: 0 0 10px rgba(20, 47, 208, 0.35);
   transition: transform 0.08s ease, box-shadow 0.12s ease;
+
+  /* fiksuota pozicija burbule */
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+
+  /* be iOS/Android mėlyno blink */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 .input-action:hover {
   box-shadow: 0 0 14px rgba(20, 47, 208, 0.45);
 }
 .input-action:active {
   transform: none;
+}
+.input-action:focus,
+.input-action:focus-visible {
+  outline: none;
+  /* jei nenori jokio extra šešėlio per fokusą, palik taip */
 }
 .input-action svg {
   width: 30px;
@@ -536,8 +554,8 @@
     margin-right: calc(-1 * var(--gutter));
     padding-left: var(--gutter);
     padding-right: var(--gutter);
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 
     display: flex !important;
     flex-wrap: nowrap;
@@ -567,7 +585,6 @@
     cursor: grabbing;
   }
 
-  /* Sticky dokas apačioje — latakai po 28px */
   /* Sticky dokas apačioje — latakai po 28px */
   .input-dock {
     position: fixed;
@@ -617,20 +634,8 @@
 
   /* Mic */
   .input-action {
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
-    margin-left: 0;
-    display: grid;
-    place-items: center;
-    background: linear-gradient(180deg, #0a186a 0%, #142fd0 100%);
+    margin-left: 0px;
   }
-  .input-action svg {
-    width: 30px; /* 30 buvo per didelis 32×32 burbule */
-    height: 30px;
-    color: #fff;
-  }
-
   /* Mobile: išjungiame fade maskes (desktop’e paliekam) */
   .input-wrap::before,
   .input-wrap::after {

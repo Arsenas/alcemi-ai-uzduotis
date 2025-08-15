@@ -18,7 +18,6 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [answer, setAnswer] = useState("");
 
-  // autosize
   const taRef = useRef<HTMLTextAreaElement>(null);
   const MAX_H = 136; // turi sutapti su CSS .input-wrap max-height
 
@@ -31,25 +30,23 @@ export default function App() {
     const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 0.5;
 
     wrap.classList.toggle("has-overflow", hasOverflow);
-    wrap.classList.toggle("scrolled", !atTop); // viršaus fade
-    wrap.classList.toggle("has-more-below", !atBottom); // apačios fade
+    wrap.classList.toggle("scrolled", !atTop);
+    wrap.classList.toggle("has-more-below", !atBottom);
   }
 
   function autoresize(el: HTMLTextAreaElement) {
     el.style.height = "auto";
     const next = Math.min(el.scrollHeight, MAX_H);
     el.style.height = next + "px";
-    // jei turinio daugiau nei telpa — ijungiam scroll
     el.style.overflowY = el.scrollHeight > next ? "auto" : "hidden";
   }
 
-  // focus + autosize kai atsidaro modalas / peršoka į "typing"
+  // focus + autosize kai peršokam į "typing"
   useEffect(() => {
     if (!open) return;
     if (view !== "typing") return;
     const el = taRef.current;
     if (!el) return;
-    // po render
     requestAnimationFrame(() => {
       el.focus();
       el.selectionStart = el.value.length;
@@ -61,14 +58,13 @@ export default function App() {
   function pickChip(v: string) {
     setQuery(v);
     setView("typing");
-    // autosize kai state pasikeis
     requestAnimationFrame(() => {
       if (taRef.current) autoresize(taRef.current);
     });
   }
 
   function submit() {
-    if (!query.trim()) return; // nieko neteikiam jei tuščia
+    if (!query.trim()) return;
     setTimeout(() => {
       setAnswer("Lorem ipsum response bubble…");
       setView("answer");
@@ -81,6 +77,17 @@ export default function App() {
     setView("chips");
   }
 
+  function handleBack() {
+    if (view === "answer") {
+      setView("typing");
+      requestAnimationFrame(() => taRef.current?.focus());
+    } else if (view === "typing") {
+      setView("chips");
+    } else {
+      setOpen(false);
+    }
+  }
+
   return (
     <div className="app-shell">
       <Background />
@@ -90,15 +97,17 @@ export default function App() {
           onOpen={() => {
             setOpen(true);
             reset();
-            // užtikrinam fokusą kai modal atsidarys
-            requestAnimationFrame(() => {
-              if (taRef.current) taRef.current.focus();
-            });
+            requestAnimationFrame(() => taRef.current?.focus());
           }}
         />
       )}
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Hello, what are you looking for today?">
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        onBack={handleBack}
+        title="Hello, what are you looking for today?"
+      >
         {/* Chips */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Chips items={CHIP_ITEMS} onPick={pickChip} />
@@ -132,7 +141,17 @@ export default function App() {
                 }}
                 aria-label="Message"
               />
-              <button type="submit" className="input-action" aria-label="Send or voice">
+              {/* MIC – neaktyvus, ne submit */}
+              <button
+                type="button"
+                className="input-action"
+                aria-label="Voice (coming soon)"
+                aria-disabled="true" // kartu su CSS aukščiau -> inertiškas
+                tabIndex={-1} // nefokusuoja
+                onPointerDown={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => e.preventDefault()}
+              >
                 <VoiceIcon width={20} height={20} aria-hidden="true" focusable="false" />
               </button>
             </form>

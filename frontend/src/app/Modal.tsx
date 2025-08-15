@@ -6,35 +6,29 @@ import "../styles/modal.css";
 type Props = {
   open: boolean;
   onClose: () => void;
+  onBack?: () => void; // ← pridėta
   title: string;
   children: ReactNode;
 };
 
 /**
- * Įterpia DU galimus laužymo taškus:
- * - MOBILE: prieš "looking"
- * - DESKTOP: prieš "for today?"
- * Kuris bus rodomas – valdoma CSS .break--mobile / .break--desktop
+ * Įterpia du galimus laužymo taškus (mobile ir desktop).
  */
 function withResponsiveBreaks(text: string) {
-  // "Hello, what are you looking for today?"
-  // -> before="Hello, what are you", word="looking", after=" for today?"
   const m = text.match(/^(.*?\bare you)\s+(looking)\b(.*)$/i);
   if (!m) return text;
 
   const before = m[1];
   const looking = m[2];
-  const after = m[3]; // starts with space: " for today?"
+  const after = m[3];
 
   return (
     <>
       {before}
-      {/* MOBILE break (prieš "looking") */}
       <span className="break--mobile" aria-hidden="true">
         <br />
       </span>{" "}
-      {looking}
-      {/* DESKTOP break (prieš "for today?") */}{" "}
+      {looking}{" "}
       <span className="break--desktop" aria-hidden="true">
         <br />
       </span>
@@ -43,7 +37,7 @@ function withResponsiveBreaks(text: string) {
   );
 }
 
-export default function Modal({ open, onClose, title, children }: Props) {
+export default function Modal({ open, onClose, onBack, title, children }: Props) {
   const [show, setShow] = useState(open);
   const [closing, setClosing] = useState(false);
 
@@ -74,6 +68,7 @@ export default function Modal({ open, onClose, title, children }: Props) {
 
   return (
     <div
+      id="ai-modal"
       className={`modal-root ${open || closing ? "open" : ""} ${closing ? "closing" : ""}`}
       role="dialog"
       aria-modal="true"
@@ -83,13 +78,20 @@ export default function Modal({ open, onClose, title, children }: Props) {
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-ctr">
           <div className="modal-head" role="toolbar" aria-label="AI modal navigation">
-            <a className="head-logo-mobile" href="/" aria-label="Alcemi home">
+            <button type="button" className="head-logo-mobile" aria-label="Back" onClick={onBack ?? onClose}>
               <img src="/img/logo-mobile.svg" alt="Alcemi" />
-            </a>
-            <button className="icon-btn head-back" aria-label="Back">
+            </button>
+
+            <button
+              className="icon-btn head-back"
+              aria-label="Back"
+              onClick={onBack ?? onClose} // ← back handler
+            >
               <img src="/img/back.svg" alt="" aria-hidden="true" />
             </button>
+
             <div className="head-spacer" aria-hidden />
+
             <button className="icon-btn head-close" aria-label="Close" onClick={onClose}>
               <img src="/img/close.svg" alt="" aria-hidden="true" />
             </button>
