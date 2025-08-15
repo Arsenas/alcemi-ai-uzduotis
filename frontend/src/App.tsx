@@ -139,6 +139,12 @@ export default function App() {
                     submit();
                   }
                 }}
+                onFocus={() => {
+                  document.body.classList.add("kb-open");
+                }}
+                onBlur={() => {
+                  document.body.classList.remove("kb-open");
+                }}
                 aria-label="Message"
               />
               {/* MIC – neaktyvus, ne submit */}
